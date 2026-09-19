@@ -13,10 +13,14 @@ const {
   Notification,
 } = require('../models');
 
-const run = async () => {
+const seedDatabase = async ({ force = false } = {}) => {
   await sequelize.authenticate();
-  console.log('Syncing tables (force: true — drops and recreates them)...');
-  await sequelize.sync({ force: true });
+  if (force) {
+    console.log('Syncing tables (force: true — drops and recreates them)...');
+    await sequelize.sync({ force: true });
+  } else {
+    await sequelize.sync();
+  }
 
   console.log('Seeding services...');
   const services = await Service.bulkCreate([
@@ -251,11 +255,18 @@ const run = async () => {
   console.log(' - Co-Founder & Admin: farhan@workforce.app / password123 (Farhan Ahmed)');
   console.log(' - Worker (Electrician): karim.electrician@workforce.app / worker123');
   console.log(' - Worker (Plumber): jahangir.plumber@workforce.app / worker123');
-  await sequelize.close();
-  process.exit(0);
 };
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+if (require.main === module) {
+  seedDatabase({ force: true })
+    .then(async () => {
+      await sequelize.close();
+      process.exit(0);
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+}
+
+module.exports = { seedDatabase };

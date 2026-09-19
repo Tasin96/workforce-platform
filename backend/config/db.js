@@ -1,6 +1,12 @@
 const { Sequelize } = require('sequelize');
 
-const useSSL = String(process.env.PG_SSL).toLowerCase() === 'true';
+const isProduction = process.env.NODE_ENV === 'production';
+const isRemoteDb = Boolean(
+  process.env.DATABASE_URL &&
+  !process.env.DATABASE_URL.includes('localhost') &&
+  !process.env.DATABASE_URL.includes('127.0.0.1')
+);
+const useSSL = String(process.env.PG_SSL).toLowerCase() === 'true' || isProduction || isRemoteDb;
 
 const commonOptions = {
   dialect: 'postgres',
