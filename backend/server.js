@@ -22,28 +22,6 @@ app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
 app.use(express.json());
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'workforce-backend' }));
-
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/services', require('./routes/services'));
-app.use('/api/workers', require('./routes/workers'));
-app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/payments', require('./routes/payments'));
-app.use('/api/reviews', require('./routes/reviews'));
-app.use('/api/disputes', require('./routes/disputes'));
-app.use('/api/notifications', require('./routes/notifications'));
-
-// Serve frontend dist if available (Production / Render unified deployment)
-const frontendDist = path.join(__dirname, '../frontend/dist');
-if (fs.existsSync(frontendDist)) {
-  app.use(express.static(frontendDist));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  });
-}
-
 let isDbInitialized = false;
 let dbInitPromise = null;
 
@@ -79,6 +57,28 @@ app.use(async (req, res, next) => {
   }
   next();
 });
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'workforce-backend' }));
+
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/services', require('./routes/services'));
+app.use('/api/workers', require('./routes/workers'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/disputes', require('./routes/disputes'));
+app.use('/api/notifications', require('./routes/notifications'));
+
+// Serve frontend dist if available (Production / Render unified deployment)
+const frontendDist = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 app.use(notFound);
 app.use(errorHandler);
