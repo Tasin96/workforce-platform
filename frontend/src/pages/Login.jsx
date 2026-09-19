@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck, HiArrowRight, HiOutlineSparkles } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck, HiArrowRight } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { scrollToTop } from '../components/ScrollToTop';
 
@@ -20,11 +20,6 @@ const Login = () => {
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid email or password');
     }
-  };
-
-  const setDemoCredentials = (email, password) => {
-    setForm({ email, password });
-    toast('Credentials filled! Click "Sign in" to continue.', { icon: '🔑' });
   };
 
   return (
@@ -125,124 +120,6 @@ const Login = () => {
             Register now
           </Link>
         </p>
-
-        {/* Quick Demo Credentials Panel */}
-        <div className="mt-8 pt-6 border-t border-amber-100">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800/80 flex items-center gap-1.5">
-              <HiOutlineSparkles className="text-amber-500" />
-              One-Click Demo Accounts
-            </span>
-            <span className="text-[10px] text-stone-400 font-mono">Instant Sandbox</span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-2">
-            <button
-              type="button"
-              onClick={() => setDemoCredentials('admin@workforce.app', 'admin123')}
-              className="group flex items-center justify-between p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/40 hover:bg-amber-100/60 hover:border-amber-300 text-left transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#881337] to-[#C2410C] text-white flex items-center justify-center text-xs font-bold">
-                  👑
-                </span>
-                <div>
-                  <div className="text-xs font-semibold text-stone-800 group-hover:text-[#881337]">
-                    Founder &amp; Administrator (Tasin Islam)
-                  </div>
-                  <div className="text-[11px] text-stone-500 font-mono">admin@workforce.app</div>
-                </div>
-              </div>
-              <span className="text-xs font-semibold text-[#881337] opacity-0 group-hover:opacity-100 transition-opacity">
-                Auto-fill
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDemoCredentials('habib@gmail.com', 'password123')}
-              className="group flex items-center justify-between p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/40 hover:bg-amber-100/60 hover:border-amber-300 text-left transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-lg bg-[#D97706] text-white flex items-center justify-center text-xs font-bold">
-                  ⭐
-                </span>
-                <div>
-                  <div className="text-xs font-semibold text-stone-800 group-hover:text-amber-900">
-                    Co-Founder &amp; Client (Ahosan Habib)
-                  </div>
-                  <div className="text-[11px] text-stone-500 font-mono">habib@gmail.com</div>
-                </div>
-              </div>
-              <span className="text-xs font-semibold text-[#D97706] opacity-0 group-hover:opacity-100 transition-opacity">
-                Auto-fill
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDemoCredentials('farhan@workforce.app', 'password123')}
-              className="group flex items-center justify-between p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/40 hover:bg-amber-100/60 hover:border-amber-300 text-left transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-lg bg-[#B45309] text-white flex items-center justify-center text-xs font-bold">
-                  ⭐
-                </span>
-                <div>
-                  <div className="text-xs font-semibold text-stone-800 group-hover:text-amber-900">
-                    Co-Founder &amp; Administrator (Farhan Ahmed)
-                  </div>
-                  <div className="text-[11px] text-stone-500 font-mono">farhan@workforce.app</div>
-                </div>
-              </div>
-              <span className="text-xs font-semibold text-[#B45309] opacity-0 group-hover:opacity-100 transition-opacity">
-                Auto-fill
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDemoCredentials('customer@workforce.app', 'customer123')}
-              className="group flex items-center justify-between p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/40 hover:bg-amber-100/60 hover:border-amber-300 text-left transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
-                  👤
-                </span>
-                <div>
-                  <div className="text-xs font-semibold text-stone-800 group-hover:text-emerald-900">
-                    Client Account (Tasin Islam)
-                  </div>
-                  <div className="text-[11px] text-stone-500 font-mono">customer@workforce.app</div>
-                </div>
-              </div>
-              <span className="text-xs font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                Auto-fill
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDemoCredentials('karim.electrician@workforce.app', 'worker123')}
-              className="group flex items-center justify-between p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/40 hover:bg-amber-100/60 hover:border-amber-300 text-left transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-lg bg-[#EA580C] text-white flex items-center justify-center text-xs font-bold">
-                  ⚡
-                </span>
-                <div>
-                  <div className="text-xs font-semibold text-stone-800 group-hover:text-orange-900">
-                    Technician (Karim Sheikh - Electrician)
-                  </div>
-                  <div className="text-[11px] text-stone-500 font-mono">karim.electrician@workforce.app</div>
-                </div>
-              </div>
-              <span className="text-xs font-semibold text-[#EA580C] opacity-0 group-hover:opacity-100 transition-opacity">
-                Auto-fill
-              </span>
-            </button>
-          </div>
-        </div>
       </motion.div>
     </div>
   );
