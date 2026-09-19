@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // payments(payment_id PK, booking_id FK UNIQUE, amount CHECK>=0, method ENUM,
 // status ENUM, transaction_id UNIQUE, paid_at)

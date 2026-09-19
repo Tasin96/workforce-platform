@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // notifications(notification_id PK, user_id FK, type, message, is_read DEFAULT false, sent_at)
 const Notification = sequelize.define(

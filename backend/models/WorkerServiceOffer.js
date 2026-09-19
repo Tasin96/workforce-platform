@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // worker_service_offers(worker_id FK, service_id FK, hourly_rate, fixed_price) composite PK
 const WorkerServiceOffer = sequelize.define(

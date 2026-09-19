@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // worker_profiles(worker_id PK, user_id FK UNIQUE, service_type, experience, rating CHECK 0-5)
 const WorkerProfile = sequelize.define(

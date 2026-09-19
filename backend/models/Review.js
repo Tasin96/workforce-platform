@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // reviews(review_id PK, booking_id FK UNIQUE, customer_id FK, worker_id FK, rating CHECK 1-5, comment)
 const Review = sequelize.define(

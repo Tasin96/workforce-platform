@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // availabilities(availability_id PK, worker_id FK, day_of_week, start_time, end_time CHECK end>start)
 const Availability = sequelize.define(

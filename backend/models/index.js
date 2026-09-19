@@ -1,4 +1,5 @@
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 const User = require('./User');
 const Service = require('./Service');
 const WorkerProfile = require('./WorkerProfile');

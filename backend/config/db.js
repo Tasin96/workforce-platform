@@ -1,4 +1,6 @@
-const { Sequelize } = require('sequelize');
+const SequelizeModule = require('sequelize');
+const Sequelize = SequelizeModule.Sequelize || SequelizeModule.default || SequelizeModule;
+const pg = require('pg');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isRemoteDb = Boolean(
@@ -10,6 +12,7 @@ const useSSL = String(process.env.PG_SSL).toLowerCase() === 'true' || isProducti
 
 const commonOptions = {
   dialect: 'postgres',
+  dialectModule: pg,
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   dialectOptions: useSSL
     ? { ssl: { require: true, rejectUnauthorized: false } }
@@ -41,8 +44,14 @@ const connectDB = async () => {
     console.log(`PostgreSQL connected: ${sequelize.config.host}/${sequelize.config.database}`);
   } catch (err) {
     console.error(`PostgreSQL connection error: ${err.message}`);
-    process.exit(1);
+    // In serverless environments, avoid process.exit so handlers can surface the error gracefully
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1);
+    }
   }
 };
 
 module.exports = { sequelize, connectDB };
+module.exports.default = { sequelize, connectDB };
+module.exports.sequelize = sequelize;
+module.exports.connectDB = connectDB;

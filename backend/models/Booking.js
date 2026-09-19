@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // bookings(booking_id PK, customer_id FK, worker_id FK, service_id FK, date_time,
 // status ENUM, accepted_at, started_at, completed_at, cancelled_by, cancellation_reason)

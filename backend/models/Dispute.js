@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const dbConfig = require('../config/db');
+const sequelize = dbConfig.sequelize || dbConfig.default?.sequelize || dbConfig;
 
 // disputes(dispute_id PK, booking_id FK, review_id FK nullable, raised_by, reason,
 // status ENUM, created_at, resolved_at)

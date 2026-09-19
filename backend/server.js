@@ -44,29 +44,54 @@ if (fs.existsSync(frontendDist)) {
   });
 }
 
+let isDbInitialized = false;
+let dbInitPromise = null;
+
+const ensureDb = async () => {
+  if (isDbInitialized) return;
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      await connectDB();
+      await sequelize.sync();
+      try {
+        const count = await Service.count();
+        if (count === 0) {
+          console.log('Database is empty. Automatically initializing demo data...');
+          await seedDatabase({ force: false });
+        }
+      } catch (err) {
+        console.warn('Auto-seed check warning:', err.message);
+      }
+      isDbInitialized = true;
+    })();
+  }
+  return dbInitPromise;
+};
+
+// Database connection readiness middleware for serverless invocations
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    try {
+      await ensureDb();
+    } catch (err) {
+      console.warn('DB readiness warning:', err.message);
+    }
+  }
+  next();
+});
+
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const start = async () => {
-  await connectDB();
-  await sequelize.sync();
-
-  // Auto-seed initial services and demo data if the database is newly created
-  try {
-    const count = await Service.count();
-    if (count === 0) {
-      console.log('Database is empty. Automatically initializing demo data...');
-      await seedDatabase({ force: false });
-    }
-  } catch (err) {
-    console.warn('Auto-seed check warning:', err.message);
-  }
-
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-};
-
-start();
+// On regular servers (local / Render), start listening on PORT
+if (!process.env.VERCEL) {
+  const start = async () => {
+    await ensureDb();
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  };
+  start();
+}
 
 module.exports = app;
