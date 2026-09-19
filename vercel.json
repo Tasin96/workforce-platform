@@ -5,7 +5,8 @@
       "root": "frontend"
     },
     "backend": {
-      "root": "backend"
+      "root": "backend",
+      "entrypoint": "server.js"
     }
   },
   "rewrites": [
