@@ -105,21 +105,6 @@ const Hero = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-br from-amber-400/15 via-rose-500/10 to-orange-400/15 blur-[120px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10 w-full">
-        {/* Top HUD Telemetry Streamer */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-stone-600 bg-white/95 border border-amber-200/80 px-4 py-2 rounded-2xl backdrop-blur-xl shadow-card">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulseDot" />
-            <span className="font-bold text-[#881337]">SECTOR: DHAKA-01</span>
-            <span className="text-stone-300 hidden sm:inline">|</span>
-            <span className="text-stone-500 hidden sm:inline">LAT: 23.8103° N • LNG: 90.4125° E</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-emerald-700 font-bold">428 SPECIALISTS ONLINE</span>
-            <span className="text-stone-300">|</span>
-            <span className="text-[#C2410C] font-semibold">DISPATCH PING: 18ms</span>
-          </div>
-        </div>
-
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Heading & Search */}
           <motion.div

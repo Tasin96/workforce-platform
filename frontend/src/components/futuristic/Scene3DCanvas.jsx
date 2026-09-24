@@ -11,10 +11,7 @@ const MODES = {
 const Scene3DCanvas = ({ className = '' }) => {
   const canvasRef = useRef(null);
   const [mode, setMode] = useState('GLOBAL');
-  const [fps, setFps] = useState(60);
-  const [activeNodesCount, setActiveNodesCount] = useState(428);
   const [isHovered, setIsHovered] = useState(false);
-  const [cameraAngle, setCameraAngle] = useState({ x: 0, y: 0 });
 
   // Mouse & interaction state refs for zero-overhead animation loop
   const stateRef = useRef({
@@ -45,8 +42,6 @@ const Scene3DCanvas = ({ className = '' }) => {
 
     let animId;
     let lastTime = performance.now();
-    let frameCount = 0;
-    let fpsTimer = 0;
 
     // Resize handler
     const handleResize = () => {
@@ -114,15 +109,6 @@ const Scene3DCanvas = ({ className = '' }) => {
     const render = (now) => {
       const delta = (now - lastTime) / 1000;
       lastTime = now;
-
-      // FPS calculation
-      frameCount++;
-      fpsTimer += delta;
-      if (fpsTimer >= 0.5) {
-        setFps(Math.round(frameCount / fpsTimer));
-        frameCount = 0;
-        fpsTimer = 0;
-      }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -323,14 +309,6 @@ const Scene3DCanvas = ({ className = '' }) => {
       ctx.arc(cx, cy, 140 + corePulse, 0, Math.PI * 2);
       ctx.fill();
 
-      // Update camera angle state for UI display (throttled)
-      if (Math.random() < 0.1) {
-        setCameraAngle({
-          x: Math.round(((state.rotX * 180) / Math.PI) % 360),
-          y: Math.round(((state.rotY * 180) / Math.PI) % 360),
-        });
-      }
-
       animId = requestAnimationFrame(render);
     };
 
@@ -371,9 +349,6 @@ const Scene3DCanvas = ({ className = '' }) => {
   const switchMode = (m) => {
     setMode(m);
     playBlip(1600);
-    if (m === 'NEURAL') setActiveNodesCount(612);
-    else if (m === 'CORE') setActiveNodesCount(256);
-    else setActiveNodesCount(428);
   };
 
   return (
@@ -394,24 +369,6 @@ const Scene3DCanvas = ({ className = '' }) => {
         onMouseUp={handleMouseUp}
       />
 
-      {/* Top HUD Telemetry Bar */}
-      <div className="absolute top-3 left-4 right-4 flex items-center justify-between text-[11px] font-mono pointer-events-none">
-        <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/95 border border-amber-200/90 text-[#9A3412] backdrop-blur-xl shadow-card">
-          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulseDot" />
-          <span className="font-bold tracking-wider">3D NEURAL MATRIX</span>
-          <span className="text-amber-200">|</span>
-          <span className="text-stone-700 font-semibold">{activeNodesCount} NODES ACTIVE</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="px-2.5 py-1 rounded-lg bg-white/95 border border-amber-200 text-stone-700 backdrop-blur-xl shadow-xs">
-            <span className="text-[#C2410C] font-bold">{fps}</span> FPS
-          </div>
-          <div className="hidden sm:block px-2.5 py-1 rounded-lg bg-white/95 border border-amber-200 text-stone-500 backdrop-blur-xl shadow-xs">
-            ROT: {cameraAngle.x}° / {cameraAngle.y}°
-          </div>
-        </div>
-      </div>
 
       {/* Bottom Mode Switcher HUD */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/95 border border-amber-200/90 backdrop-blur-2xl shadow-ticket">
