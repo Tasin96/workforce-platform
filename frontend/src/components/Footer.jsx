@@ -27,10 +27,10 @@ const Footer = () => (
 
       <div>
         <h4 className="font-display font-bold text-sm tracking-wider uppercase text-stone-900 mb-4">
-          // Platform
+          Platform
         </h4>
         <ul className="space-y-2.5 text-xs font-mono text-stone-600">
-          <li><Link to="/" onClick={() => scrollToTop()} className="hover:text-[#881337] transition-colors">Home // Grid</Link></li>
+          <li><Link to="/" onClick={() => scrollToTop()} className="hover:text-[#881337] transition-colors">Home Grid</Link></li>
           <li><Link to="/browse" onClick={() => scrollToTop()} className="hover:text-[#881337] transition-colors">Find a Specialist</Link></li>
           <li><Link to="/register" onClick={() => scrollToTop()} className="hover:text-[#881337] transition-colors">Register as Worker</Link></li>
           <li><Link to="/dashboard" onClick={() => scrollToTop()} className="hover:text-[#881337] transition-colors">Dispatch Dashboard</Link></li>
@@ -40,7 +40,7 @@ const Footer = () => (
 
       <div>
         <h4 className="font-display font-bold text-sm tracking-wider uppercase text-stone-900 mb-4">
-          // Certified Trades
+          Certified Trades
         </h4>
         <ul className="space-y-2.5 text-xs font-mono text-stone-600">
           <li>Electrician Grid (৳350/hr)</li>
@@ -54,7 +54,7 @@ const Footer = () => (
 
       <div>
         <h4 className="font-display font-bold text-sm tracking-wider uppercase text-stone-900 mb-4">
-          // Leadership &amp; Contact
+          Leadership &amp; Contact
         </h4>
         <ul className="space-y-3 text-xs font-mono text-stone-600">
           <li className="flex items-start gap-2 text-stone-700">

@@ -94,7 +94,7 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
 
           <div className="mb-5">
             <span className="font-mono text-xs font-bold text-[#C2410C] uppercase tracking-wider">
-              // DISPATCH ORDER SPECIFICATION
+              DISPATCH ORDER SPECIFICATION
             </span>
             <h2 className="font-display font-extrabold text-2xl text-stone-900 mt-1">
               Book {worker.user_id?.name || worker.name}

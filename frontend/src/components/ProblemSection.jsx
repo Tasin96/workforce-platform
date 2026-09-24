@@ -47,7 +47,7 @@ const ProblemSection = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold uppercase tracking-wider mb-3 shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
-              <span>// THE 2026 DISPATCH STANDARD</span>
+              <span>THE 2026 DISPATCH STANDARD</span>
             </div>
             <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
               Designed for Speed, Certainty,
@@ -89,7 +89,7 @@ const ProblemSection = () => {
                   style={{ color: p.color }}
                   className="text-[10px] font-mono font-bold uppercase tracking-wider block mb-1"
                 >
-                  // {p.tag}
+                  {p.tag}
                 </span>
                 <h3 className="font-display font-bold text-lg text-stone-900 mb-2 group-hover:text-[#881337] transition-colors">
                   {p.title}

@@ -21,7 +21,7 @@ const TradesMarquee = () => {
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#C2410C] animate-pulseDot" />
           <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-800/80">
-            // ACTIVE TELEMETRY SECTORS &amp; TRADE UNITS
+            ACTIVE TELEMETRY SECTORS &amp; TRADE UNITS
           </h3>
         </div>
         <Link

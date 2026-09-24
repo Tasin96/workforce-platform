@@ -290,7 +290,7 @@ const LiveRadarScanner = () => {
 
               {/* Bottom Radar Status HUD */}
               <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-[10px] font-mono text-stone-600 bg-white/95 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm backdrop-blur-md">
-                <span>SWEEP: 360° // FREQ: 2.4 GHz</span>
+                <span>SWEEP: 360° • FREQ: 2.4 GHz</span>
                 <span className="text-[#881337] font-bold">5 BEACONS ACQUIRED</span>
               </div>
             </div>

@@ -9,7 +9,7 @@ const NotFound = () => (
 
     <div className="relative z-10">
       <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-amber-50 text-[#C2410C] font-mono text-xs font-bold mb-4 border border-amber-200/80 shadow-xs">
-        // 404 SECTOR COORDINATES UNRESOLVED
+        404 SECTOR COORDINATES UNRESOLVED
       </div>
       <h1 className="text-4xl sm:text-5xl font-extrabold text-stone-900 tracking-tight mb-3 font-display">
         Signal Lost in Matrix

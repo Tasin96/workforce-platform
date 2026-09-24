@@ -190,7 +190,7 @@ const HoloCard = ({ item, onSelect }) => {
           </div>
 
           <div className="text-[10px] font-mono tracking-widest text-amber-800/70 uppercase font-bold mb-1">
-            // {item.category}
+            {item.category}
           </div>
 
           <h3 className="font-display font-bold text-xl text-stone-900 group-hover:text-[#881337] transition-colors">

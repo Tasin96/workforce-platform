@@ -84,7 +84,7 @@ const BrowseWorkers = () => {
       <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 text-[#9A3412] text-xs font-mono font-bold uppercase tracking-wider mb-2 border border-amber-300/80">
-            // SPECIALIST DIRECTORY
+            SPECIALIST DIRECTORY
           </div>
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-stone-900 tracking-tight">
             Find Verified Local Specialists

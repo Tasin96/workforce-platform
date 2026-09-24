@@ -189,7 +189,7 @@ const WorkerProfilePage = () => {
             <div className="bg-white rounded-2xl p-6 border border-amber-200/80 shadow-md shadow-amber-900/5 sticky top-24 space-y-6">
               <div>
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C2410C] block mb-1">
-                  // SELECT SERVICE &amp; BOOK
+                  SELECT SERVICE &amp; BOOK
                 </span>
                 <h3 className="font-display font-extrabold text-2xl text-stone-900">Services &amp; Rates</h3>
               </div>

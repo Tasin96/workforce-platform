@@ -111,7 +111,7 @@ const Hero = () => {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulseDot" />
             <span className="font-bold text-[#881337]">SECTOR: DHAKA-01</span>
             <span className="text-stone-300 hidden sm:inline">|</span>
-            <span className="text-stone-500 hidden sm:inline">LAT: 23.8103° N // LNG: 90.4125° E</span>
+            <span className="text-stone-500 hidden sm:inline">LAT: 23.8103° N • LNG: 90.4125° E</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-emerald-700 font-bold">428 SPECIALISTS ONLINE</span>

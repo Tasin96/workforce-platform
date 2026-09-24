@@ -54,7 +54,7 @@ const StatsSection = () => (
             className="text-left p-6 rounded-2xl bg-[#FAF8F5] border border-amber-200/70 hover:border-amber-400 hover:shadow-xl transition-all duration-300 backdrop-blur-md group shadow-xs"
           >
             <div className="text-[10px] font-mono text-amber-800/60 mb-2 flex items-center justify-between">
-              <span>METRIC // 0{i + 1}</span>
+              <span>METRIC 0{i + 1}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] group-hover:scale-125 transition-transform" />
             </div>
             <Counter value={s.value} suffix={s.suffix} color={s.color} />
