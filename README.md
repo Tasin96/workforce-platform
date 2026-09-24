@@ -70,16 +70,6 @@ cd frontend
 npm run dev # Starts Vite server on http://localhost:5173 (proxies /api -> :5000)
 ```
 
----
-
-## 🔑 Demo Login Accounts
-
-| Role | Name | Email | Password | Phone |
-|---|---|---|---|---|
-| **Admin** | Tasin Islam | `admin@workforce.app` | `admin123` | `+8801717408075` |
-| **Customer** | Tasin Islam | `customer@workforce.app` | `customer123` | `+8801700000001` |
-| **Worker (Electrician)** | Karim Sheikh | `karim.electrician@workforce.app` | `worker123` | `+8801222222222` |
-| **Worker (Plumber)** | Jahangir Alam | `jahangir.plumber@workforce.app` | `worker123` | `+8801444444444` |
 
 ---
 
