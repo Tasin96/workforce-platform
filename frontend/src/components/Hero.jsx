@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../api/axios';
 import { scrollToTop } from './ScrollToTop';
 import Scene3DCanvas from './futuristic/Scene3DCanvas';
 import {
@@ -25,6 +26,7 @@ const verifiedCards = [
     status: 'ONLINE & READY',
     sector: 'DHAKA-GULSHAN',
     skills: ['Substation Load', 'High-Voltage', 'Breaker Diagnostics'],
+    avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'w2',
@@ -37,6 +39,7 @@ const verifiedCards = [
     status: 'IN TRANSIT',
     sector: 'DHAKA-BANANI',
     skills: ['Acoustic Sonar', 'PEX Lines', 'High-Pressure Valves'],
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'w3',
@@ -49,6 +52,7 @@ const verifiedCards = [
     status: 'VERIFIED ELITE',
     sector: 'DHAKA-DHANMONDI',
     skills: ['Textured Finishes', 'Nano-Waterproofing', '5-Yr Guarantee'],
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
   },
 ];
 
@@ -57,6 +61,39 @@ const Hero = () => {
   const [selectedTrade, setSelectedTrade] = useState('All Trades');
   const [searchLocation, setSearchLocation] = useState('');
   const [activeWorkerIdx, setActiveWorkerIdx] = useState(0);
+  const [cards, setCards] = useState(verifiedCards);
+
+  // Sync real registered worker avatars from backend if available
+  useEffect(() => {
+    let isMounted = true;
+    const syncWorkerAvatars = async () => {
+      try {
+        const { data } = await api.get('/workers');
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setCards((prev) =>
+            prev.map((card) => {
+              const matched = data.find((dw) => {
+                const dwName = (dw.user?.name || '').toLowerCase();
+                const cardName = card.name.toLowerCase();
+                return dwName.includes(cardName.split(' ')[0]) || cardName.includes(dwName.split(' ')[0]);
+              });
+              const photo = matched?.user?.avatar || matched?.avatar;
+              if (photo) {
+                return { ...card, avatar: photo };
+              }
+              return card;
+            })
+          );
+        }
+      } catch (err) {
+        // Fallback to verifiedCards default avatars
+      }
+    };
+    syncWorkerAvatars();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // 3D Perspective Tilt on Card
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
@@ -90,7 +127,7 @@ const Hero = () => {
     navigate(`/browse?${params.toString()}`);
   };
 
-  const currentWorker = verifiedCards[activeWorkerIdx];
+  const currentWorker = cards[activeWorkerIdx] || cards[0];
 
   return (
     <section className="relative min-h-[90vh] flex items-center bg-[#FAF8F5] text-stone-900 pt-10 pb-20 overflow-hidden border-b border-amber-200/60">
@@ -230,20 +267,27 @@ const Hero = () => {
 
               {/* Worker Switcher Hologram Tabs */}
               <div className="flex gap-1.5 p-1 rounded-xl bg-stone-100/80 border border-amber-200/60 mb-5">
-                {verifiedCards.map((w, idx) => (
+                {cards.map((w, idx) => (
                   <button
                     key={w.id}
                     onClick={() => {
                       setActiveWorkerIdx(idx);
                       playClick();
                     }}
-                    className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-mono font-bold transition-all ${
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 ${
                       activeWorkerIdx === idx
                         ? 'bg-gradient-to-r from-[#881337] to-[#C2410C] text-white shadow-sm'
                         : 'text-stone-600 hover:text-stone-900'
                     }`}
                   >
-                    {w.name.split(' ')[0]}
+                    {w.avatar && (
+                      <img
+                        src={w.avatar}
+                        alt=""
+                        className="w-4 h-4 rounded-full object-cover shrink-0 border border-amber-300/50"
+                      />
+                    )}
+                    <span>{w.name.split(' ')[0]}</span>
                   </button>
                 ))}
               </div>
@@ -260,9 +304,17 @@ const Hero = () => {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white font-display font-extrabold text-2xl flex items-center justify-center shadow-md shadow-amber-600/20">
-                        {currentWorker.name.charAt(0)}
-                      </div>
+                      {currentWorker.avatar ? (
+                        <img
+                          src={currentWorker.avatar}
+                          alt={currentWorker.name}
+                          className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300 shadow-md shadow-amber-600/20 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white font-display font-extrabold text-2xl flex items-center justify-center shadow-md shadow-amber-600/20 shrink-0">
+                          {currentWorker.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div className="flex items-center gap-1.5">
                           <h4 className="font-display font-bold text-stone-900 text-lg">{currentWorker.name}</h4>
