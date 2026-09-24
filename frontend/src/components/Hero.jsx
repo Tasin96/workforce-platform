@@ -10,7 +10,6 @@ import {
   HiOutlineLocationMarker,
   HiOutlineStar,
   HiOutlineClock,
-  HiOutlineLightningBolt,
 } from 'react-icons/hi';
 import { playBlip, playEngage, playClick } from '../utils/cyberAudio';
 
@@ -183,10 +182,6 @@ const Hero = () => {
               <div className="flex items-center gap-1.5">
                 <HiOutlineClock className="text-[#C2410C] text-lg" />
                 <span>Sub-15 Min Rapid Response</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <HiOutlineLightningBolt className="text-[#D97706] text-lg" />
-                <span>PostgreSQL 18 Audited Escrow</span>
               </div>
             </div>
           </motion.div>

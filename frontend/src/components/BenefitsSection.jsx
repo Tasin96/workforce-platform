@@ -24,7 +24,7 @@ const benefits = [
   },
   {
     icon: HiOutlineShieldCheck,
-    title: 'PostgreSQL 18 Audited Escrow',
+    title: 'Secure Audited Escrow',
     text: 'Every transaction, booking contract, and dispute is permanently verified and safely recorded.',
     color: '#B45309',
   },
