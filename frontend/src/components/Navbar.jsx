@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,6 +8,7 @@ import {
   HiOutlinePhone,
   HiOutlineVolumeUp,
   HiOutlineVolumeOff,
+  HiChevronDown,
 } from 'react-icons/hi';
 import { FaFacebook, FaWhatsapp } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -26,14 +27,23 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [soundMuted, setSoundMuted] = useState(isMuted());
+  const [supportDropdownOpen, setSupportDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener('scroll', onScroll);
     const unsub = onMuteChange((m) => setSoundMuted(m));
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setSupportDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
       unsub();
     };
   }, []);
@@ -89,42 +99,143 @@ const Navbar = () => {
 
         {/* Right Command Strip */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Audio Synthesizer Toggle */}
-          <button
-            onClick={handleAudioToggle}
-            title={soundMuted ? 'Unmute Cyber Audio' : 'Mute Cyber Audio'}
-            className="p-2 rounded-lg bg-stone-100/80 border border-amber-200/60 hover:border-amber-400/80 text-stone-700 hover:text-[#C2410C] transition-colors text-base"
-          >
-            {soundMuted ? <HiOutlineVolumeOff className="text-stone-400" /> : <HiOutlineVolumeUp className="text-[#C2410C]" />}
-          </button>
+          {/* Support Hotline, Socials & Sound Dropdown */}
+          <div className="relative border-r border-amber-200/60 pr-3 mr-1" ref={dropdownRef}>
+            <button
+              onClick={() => {
+                playClick();
+                setSupportDropdownOpen((prev) => !prev);
+              }}
+              title="Hotline Support, Social Channels & Cyber Audio"
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all shadow-xs ${
+                supportDropdownOpen
+                  ? 'bg-amber-100/90 border-amber-400 text-[#881337]'
+                  : 'bg-stone-100/90 hover:bg-amber-50/80 border-amber-200/70 text-stone-700 hover:text-[#C2410C]'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="text-emerald-600">
+                  <FaWhatsapp className="text-sm" />
+                </span>
+                <span className="text-[#C2410C]">
+                  {soundMuted ? (
+                    <HiOutlineVolumeOff className="text-stone-400 text-sm" />
+                  ) : (
+                    <HiOutlineVolumeUp className="text-[#C2410C] text-sm animate-pulse" />
+                  )}
+                </span>
+                <HiOutlinePhone className="text-sm text-[#C2410C]" />
+              </div>
+              <span className="text-stone-800 font-bold hidden xl:inline">+8801717408075</span>
+              <span className="text-stone-800 font-bold xl:hidden">HOTLINE</span>
+              <HiChevronDown
+                className={`text-xs transition-transform duration-200 ${
+                  supportDropdownOpen ? 'rotate-180 text-[#881337]' : 'text-stone-400'
+                }`}
+              />
+            </button>
 
-          {/* Social & Phone Quick Drawer */}
-          <div className="flex items-center gap-2 border-r border-amber-200/60 pr-3 mr-1 text-stone-500">
-            <a
-              href="https://wa.me/qr/HFFRHGPGCI6PL1"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Chat with Founder Tasin Islam on WhatsApp"
-              className="p-1.5 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 text-stone-500 transition-colors"
-            >
-              <FaWhatsapp className="text-base text-emerald-600" />
-            </a>
-            <a
-              href="https://www.facebook.com/tasinislam.riju"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Tasin Islam on Facebook"
-              className="p-1.5 rounded-lg hover:bg-blue-50 hover:text-[#1877F2] text-stone-500 transition-colors"
-            >
-              <FaFacebook className="text-base text-[#1877F2]" />
-            </a>
-            <a
-              href="tel:+8801717408075"
-              title="Call Tasin Islam: +8801717408075"
-              className="text-xs font-mono font-medium text-stone-600 hover:text-[#881337] transition-colors flex items-center gap-1"
-            >
-              <HiOutlinePhone className="text-[#C2410C]" /> +8801717408075
-            </a>
+            {/* Dropdown Menu Panel */}
+            <AnimatePresence>
+              {supportDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 w-72 rounded-2xl bg-white/98 backdrop-blur-2xl border border-amber-200/90 shadow-2xl p-3 z-50 space-y-2 text-stone-700"
+                >
+                  <div className="px-2 py-1 text-[10px] font-mono font-bold text-amber-800/70 uppercase tracking-wider flex items-center justify-between border-b border-amber-100 pb-2">
+                    <span>Direct Hotline &amp; Social Channels</span>
+                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulseDot" />
+                      Live
+                    </span>
+                  </div>
+
+                  {/* Phone Call */}
+                  <a
+                    href="tel:+8801717408075"
+                    onClick={() => setSupportDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-amber-50/80 transition-all group border border-transparent hover:border-amber-200/80"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#C2410C] flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      <HiOutlinePhone />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-mono font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
+                        +8801717408075
+                      </div>
+                      <div className="text-[10px] text-stone-500">Founder Direct Hotline</div>
+                    </div>
+                  </a>
+
+                  {/* WhatsApp */}
+                  <a
+                    href="https://wa.me/qr/HFFRHGPGCI6PL1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setSupportDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-emerald-50/70 transition-all group border border-transparent hover:border-emerald-200/80"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      <FaWhatsapp />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                        WhatsApp Live Chat
+                      </div>
+                      <div className="text-[10px] text-stone-500">Instant Customer Support</div>
+                    </div>
+                  </a>
+
+                  {/* Facebook */}
+                  <a
+                    href="https://www.facebook.com/tasinislam.riju"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setSupportDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50/70 transition-all group border border-transparent hover:border-blue-200/80"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1877F2] flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      <FaFacebook />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-bold text-stone-900 group-hover:text-[#1877F2] transition-colors">
+                        Facebook Official
+                      </div>
+                      <div className="text-[10px] text-stone-500">Tasin Islam Profile</div>
+                    </div>
+                  </a>
+
+                  {/* Audio Synthesizer Control */}
+                  <div className="pt-2 border-t border-amber-100 flex items-center justify-between px-2.5 py-1.5 bg-amber-50/40 rounded-xl">
+                    <div className="flex items-center gap-2 text-xs">
+                      {soundMuted ? (
+                        <HiOutlineVolumeOff className="text-stone-400 text-base" />
+                      ) : (
+                        <HiOutlineVolumeUp className="text-[#C2410C] text-base" />
+                      )}
+                      <div>
+                        <div className="text-[11px] font-mono font-bold text-stone-800">Cyber Audio</div>
+                        <div className="text-[9px] text-stone-500">{soundMuted ? 'Muted' : 'Sound Effects Active'}</div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAudioToggle}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all border ${
+                        soundMuted
+                          ? 'bg-white border-stone-300 text-stone-600 hover:border-amber-400'
+                          : 'bg-[#C2410C] border-[#9A3412] text-white shadow-xs'
+                      }`}
+                    >
+                      {soundMuted ? 'UNMUTE' : 'MUTE'}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {user ? (
