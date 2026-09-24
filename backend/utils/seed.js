@@ -42,6 +42,7 @@ const seedDatabase = async ({ force = false } = {}) => {
     password: 'admin123',
     role: 'admin',
     location: 'Dhaka, Bangladesh',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
   });
 
   console.log('Seeding customer (Tasin Islam)...');
@@ -52,6 +53,7 @@ const seedDatabase = async ({ force = false } = {}) => {
     password: 'customer123',
     role: 'customer',
     location: 'Dhaka, Bangladesh',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
   });
 
   console.log('Seeding co-founder & customer (Ahosan Habib)...');
@@ -62,6 +64,7 @@ const seedDatabase = async ({ force = false } = {}) => {
     password: 'password123',
     role: 'customer',
     location: 'Dhaka, Bangladesh',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
   });
 
   console.log('Seeding co-founder & admin (Farhan Ahmed)...');
@@ -72,15 +75,16 @@ const seedDatabase = async ({ force = false } = {}) => {
     password: 'password123',
     role: 'admin',
     location: 'Dhaka, Bangladesh',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
   });
 
   const workersData = [
-    { name: 'Karim Sheikh', email: 'karim.electrician@workforce.app', phone: '+8801222222222', service_type: 'Electrician', experience: '5-8 years', rating: 4.8, rating_count: 34, bio: 'Licensed electrician specializing in residential wiring & emergency repairs.', is_verified: true, skills: ['Wiring', 'Fan Installation', 'Panel Repair'], completed_jobs: 128, location: 'Dhaka, Bangladesh', service: 'Electrician', hourly_rate: 350 },
-    { name: 'Nasrin Akter', email: 'nasrin.painter@workforce.app', phone: '+8801333333333', service_type: 'Painter', experience: '3-5 years', rating: 4.6, rating_count: 21, bio: 'Detail-oriented painter for interior and exterior projects.', is_verified: true, skills: ['Interior Paint', 'Texture Wall', 'Waterproofing'], completed_jobs: 76, location: 'Dhaka, Bangladesh', service: 'Painter', fixed_price: 4500 },
-    { name: 'Jahangir Alam', email: 'jahangir.plumber@workforce.app', phone: '+8801444444444', service_type: 'Plumber', experience: '8+ years', rating: 4.9, rating_count: 58, bio: 'Master plumber, 8+ years fixing leaks and installing fixtures fast.', is_verified: true, skills: ['Leak Repair', 'Pipe Fitting'], completed_jobs: 210, location: 'Dhaka, Bangladesh', service: 'Plumber', hourly_rate: 300 },
-    { name: 'Salma Begum', email: 'salma.gardener@workforce.app', phone: '+8801555555555', service_type: 'Gardener', experience: '2-4 years', rating: 4.5, rating_count: 15, bio: 'Passionate gardener helping homes bloom, big or small.', is_verified: false, skills: ['Lawn Care', 'Planting'], completed_jobs: 42, location: 'Gazipur, Bangladesh', service: 'Gardener', hourly_rate: 200 },
-    { name: 'Rafiq Islam', email: 'rafiq.carpenter@workforce.app', phone: '+8801666666666', service_type: 'Carpenter', experience: '5-8 years', rating: 4.7, rating_count: 29, bio: 'Custom furniture and quick fix-it carpentry services.', is_verified: true, skills: ['Furniture', 'Door Repair'], completed_jobs: 95, location: 'Dhaka, Bangladesh', service: 'Carpenter', fixed_price: 2500 },
-    { name: 'Moushumi Rani', email: 'moushumi.cleaner@workforce.app', phone: '+8801777777777', service_type: 'Cleaner', experience: '1-3 years', rating: 4.4, rating_count: 12, bio: 'Reliable and thorough home cleaning, on your schedule.', is_verified: false, skills: ['Deep Clean', 'Move-out Clean'], completed_jobs: 33, location: 'Dhaka, Bangladesh', service: 'Cleaner', hourly_rate: 250 },
+    { name: 'Karim Sheikh', email: 'karim.electrician@workforce.app', phone: '+8801222222222', service_type: 'Electrician', experience: '5-8 years', rating: 4.8, rating_count: 34, bio: 'Licensed electrician specializing in residential wiring & emergency repairs.', is_verified: true, skills: ['Wiring', 'Fan Installation', 'Panel Repair'], completed_jobs: 128, location: 'Dhaka, Bangladesh', service: 'Electrician', hourly_rate: 350, avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80' },
+    { name: 'Nasrin Akter', email: 'nasrin.painter@workforce.app', phone: '+8801333333333', service_type: 'Painter', experience: '3-5 years', rating: 4.6, rating_count: 21, bio: 'Detail-oriented painter for interior and exterior projects.', is_verified: true, skills: ['Interior Paint', 'Texture Wall', 'Waterproofing'], completed_jobs: 76, location: 'Dhaka, Bangladesh', service: 'Painter', fixed_price: 4500, avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80' },
+    { name: 'Jahangir Alam', email: 'jahangir.plumber@workforce.app', phone: '+8801444444444', service_type: 'Plumber', experience: '8+ years', rating: 4.9, rating_count: 58, bio: 'Master plumber, 8+ years fixing leaks and installing fixtures fast.', is_verified: true, skills: ['Leak Repair', 'Pipe Fitting'], completed_jobs: 210, location: 'Dhaka, Bangladesh', service: 'Plumber', hourly_rate: 300, avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80' },
+    { name: 'Salma Begum', email: 'salma.gardener@workforce.app', phone: '+8801555555555', service_type: 'Gardener', experience: '2-4 years', rating: 4.5, rating_count: 15, bio: 'Passionate gardener helping homes bloom, big or small.', is_verified: false, skills: ['Lawn Care', 'Planting'], completed_jobs: 42, location: 'Gazipur, Bangladesh', service: 'Gardener', hourly_rate: 200, avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80' },
+    { name: 'Rafiq Islam', email: 'rafiq.carpenter@workforce.app', phone: '+8801666666666', service_type: 'Carpenter', experience: '5-8 years', rating: 4.7, rating_count: 29, bio: 'Custom furniture and quick fix-it carpentry services.', is_verified: true, skills: ['Furniture', 'Door Repair'], completed_jobs: 95, location: 'Dhaka, Bangladesh', service: 'Carpenter', fixed_price: 2500, avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80' },
+    { name: 'Moushumi Rani', email: 'moushumi.cleaner@workforce.app', phone: '+8801777777777', service_type: 'Cleaner', experience: '1-3 years', rating: 4.4, rating_count: 12, bio: 'Reliable and thorough home cleaning, on your schedule.', is_verified: false, skills: ['Deep Clean', 'Move-out Clean'], completed_jobs: 33, location: 'Dhaka, Bangladesh', service: 'Cleaner', hourly_rate: 250, avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80' },
   ];
 
   console.log('Seeding workers...');
@@ -93,6 +97,7 @@ const seedDatabase = async ({ force = false } = {}) => {
       password: 'worker123',
       role: 'worker',
       location: w.location,
+      avatar: w.avatar,
     });
     const profile = await WorkerProfile.create({
       user_id: user.user_id,

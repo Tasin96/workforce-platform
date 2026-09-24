@@ -77,9 +77,17 @@ const WorkerProfilePage = () => {
             {/* Profile Header Card */}
             <div className="bg-white rounded-2xl p-7 border border-amber-200/80 shadow-md shadow-amber-900/5">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-display font-extrabold text-3xl shadow-md shrink-0">
-                  {profile.user_id?.name?.charAt(0)}
-                </div>
+                {profile.user_id?.avatar || profile.user?.avatar ? (
+                  <img
+                    src={profile.user_id?.avatar || profile.user?.avatar}
+                    alt={profile.user_id?.name || 'Worker'}
+                    className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-300 shadow-md shrink-0"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-display font-extrabold text-3xl shadow-md shrink-0">
+                    {profile.user_id?.name?.charAt(0)}
+                  </div>
+                )}
 
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2">

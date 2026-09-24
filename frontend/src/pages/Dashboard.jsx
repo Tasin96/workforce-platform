@@ -71,6 +71,16 @@ const Dashboard = () => {
     }
   };
 
+  const handleUpdateBookingStatus = async (id, status) => {
+    try {
+      await api.put(`/bookings/${id}/status`, { status });
+      toast.success(`Booking status updated to ${status}`);
+      loadData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not update booking status');
+    }
+  };
+
   if (loading) return <LoadingSpinner label="Loading executive board…" />;
 
   const active = bookings.filter((b) => ['pending', 'accepted', 'in_progress'].includes(b.status));
@@ -117,18 +127,35 @@ const Dashboard = () => {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Top Executive Header */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-amber-200/80 shadow-md shadow-amber-900/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-50 text-[#9A3412] border border-amber-200">
-                {user?.role?.toUpperCase()} PORTAL
-              </span>
+          <div className="flex items-center gap-4 sm:gap-5">
+            <Link to="/profile" className="relative group shrink-0" title="Edit Profile Picture">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-amber-300/80 shadow-md shadow-amber-900/10 group-hover:border-[#C2410C] transition"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl shadow-md shadow-amber-900/10">
+                  {user?.name?.charAt(0) || 'U'}
+                </div>
+              )}
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white" title="Online & Active" />
+            </Link>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-50 text-[#9A3412] border border-amber-200">
+                  {user?.role?.toUpperCase()} PORTAL
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-stone-900">
+                Welcome back, {user?.name}
+              </h1>
+              <p className="text-sm text-stone-500 mt-0.5">
+                Authorized Account: <span className="font-semibold text-stone-700">{user?.email}</span>
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-stone-900">
-              Welcome back, {user?.name}
-            </h1>
-            <p className="text-sm text-stone-500 mt-1">
-              Authorized Account: <span className="font-semibold text-stone-700">{user?.email}</span>
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -309,7 +336,67 @@ const Dashboard = () => {
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Worker Action Controls */}
+                      {user?.role === 'worker' && b.status === 'pending' && (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateBookingStatus(b._id, 'accepted')}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateBookingStatus(b._id, 'cancelled')}
+                            className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs transition"
+                          >
+                            Decline
+                          </button>
+                        </div>
+                      )}
+
+                      {user?.role === 'worker' && b.status === 'accepted' && (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateBookingStatus(b._id, 'in_progress')}
+                            className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs shadow-xs transition"
+                          >
+                            Start Job
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateBookingStatus(b._id, 'completed')}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition"
+                          >
+                            Complete
+                          </button>
+                        </div>
+                      )}
+
+                      {user?.role === 'worker' && b.status === 'in_progress' && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateBookingStatus(b._id, 'completed')}
+                          className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition"
+                        >
+                          Complete Job
+                        </button>
+                      )}
+
+                      {/* Dispute link for active/completed bookings */}
+                      {['accepted', 'in_progress', 'completed'].includes(b.status) && (
+                        <Link
+                          to="/bookings"
+                          className="px-2 py-1 rounded-lg border border-amber-300 text-[#881337] hover:bg-amber-50 text-xs font-semibold transition"
+                          title="Manage booking & raise dispute if needed"
+                        >
+                          Manage / Dispute
+                        </Link>
+                      )}
+
                       {b.payment ? (
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-mono font-bold text-[#881337] bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">

@@ -18,6 +18,13 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
 
   const estimatedCost = offer?.hourly_rate || offer?.fixed_price || 0;
 
+  // Calculate minimum selectable datetime (now) in local ISO format YYYY-MM-DDTHH:mm
+  const getMinDateTime = () => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - offset).toISOString().slice(0, 16);
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -29,6 +36,15 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
       toast.error('Only customer and admin accounts can book specialists.');
       return;
     }
+
+    // Verify date is present or future
+    const selectedDate = new Date(form.date_time);
+    const now = new Date();
+    if (selectedDate < new Date(now.getTime() - 2 * 60 * 1000)) {
+      toast.error('Past dates cannot be selected. Please choose a present or future date and time.');
+      return;
+    }
+
     setSubmitting(true);
     try {
       const resolvedServiceId =
@@ -81,7 +97,7 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
               // DISPATCH ORDER SPECIFICATION
             </span>
             <h2 className="font-display font-extrabold text-2xl text-stone-900 mt-1">
-              Book {worker.user_id?.name}
+              Book {worker.user_id?.name || worker.name}
             </h2>
             <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
               Service: <span className="font-semibold text-stone-700">{worker.service_type}</span> ·{' '}
@@ -93,19 +109,28 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
 
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-stone-700 block mb-1">
-                Preferred Date &amp; Time
-              </label>
-              <div className="flex items-center gap-2.5 border border-stone-200 rounded-xl px-3.5 py-2.5 focus-within:border-[#C2410C] focus-within:ring-2 focus-within:ring-[#C2410C]/10 transition-all">
-                <HiOutlineCalendar className="text-stone-400 text-lg flex-shrink-0" />
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-stone-700">
+                  Preferred Date &amp; Time
+                </label>
+                <span className="text-[10px] font-mono text-[#C2410C] font-semibold">
+                  Present or Future Only
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 border border-stone-200 rounded-xl px-3.5 py-2.5 focus-within:border-[#C2410C] focus-within:ring-2 focus-within:ring-[#C2410C]/10 transition-all bg-amber-50/20">
+                <HiOutlineCalendar className="text-[#C2410C] text-lg flex-shrink-0" />
                 <input
                   required
                   type="datetime-local"
+                  min={getMinDateTime()}
                   value={form.date_time}
                   onChange={(e) => setForm({ ...form, date_time: e.target.value })}
                   className="w-full outline-none bg-transparent text-sm text-stone-800 font-medium"
                 />
               </div>
+              <p className="text-[11px] text-stone-400 mt-1 font-mono">
+                * Past dates are disabled. Only present and upcoming dispatch times can be reserved.
+              </p>
             </div>
 
             <div>

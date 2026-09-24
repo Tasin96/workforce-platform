@@ -32,9 +32,17 @@ const WorkerCard = ({ worker, index = 0 }) => {
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3.5">
             <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white flex items-center justify-center font-display font-bold text-lg shadow-sm shadow-amber-600/20">
-                {worker.user_id?.name?.charAt(0) || 'W'}
-              </div>
+              {worker.user_id?.avatar || worker.user?.avatar ? (
+                <img
+                  src={worker.user_id?.avatar || worker.user?.avatar}
+                  alt={worker.user_id?.name || 'Worker'}
+                  className="w-12 h-12 rounded-xl object-cover border border-amber-300 shadow-sm shadow-amber-600/20"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white flex items-center justify-center font-display font-bold text-lg shadow-sm shadow-amber-600/20">
+                  {worker.user_id?.name?.charAt(0) || 'W'}
+                </div>
+              )}
               <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" title="Active & Available" />
             </div>
 

@@ -8,15 +8,21 @@ import {
   HiOutlineShieldCheck,
   HiArrowRight,
   HiOutlinePhone,
+  HiOutlineLightningBolt,
+  HiOutlineEye,
 } from 'react-icons/hi';
-import { playBlip, playEngage } from '../../utils/cyberAudio';
+import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
+import { playBlip, playEngage, playClick } from '../../utils/cyberAudio';
 import { scrollToTop } from '../ScrollToTop';
+import BookingModal from '../BookingModal';
 
 const RADAR_PINGS = [
   {
     id: 'ping-1',
     name: 'Karim Sheikh',
     trade: 'Licensed Electrician',
+    tradeCategory: 'Electrician',
     rating: '4.85',
     distance: '1.2 km away',
     eta: '12 mins',
@@ -27,11 +33,13 @@ const RADAR_PINGS = [
     status: 'ONLINE',
     verified: true,
     skills: ['Circuit Diagnostics', 'Breaker Tripping', '3-Phase Line'],
+    avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'ping-2',
     name: 'Jahangir Alam',
     trade: 'Master Hydraulic Plumber',
+    tradeCategory: 'Plumber',
     rating: '4.92',
     distance: '2.4 km away',
     eta: '18 mins',
@@ -42,11 +50,13 @@ const RADAR_PINGS = [
     status: 'AVAILABLE',
     verified: true,
     skills: ['Acoustic Leak Detection', 'Pressure Valve', 'Water Lines'],
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'ping-3',
     name: 'Nasrin Akter',
     trade: 'Architectural Painter',
+    tradeCategory: 'Painter',
     rating: '4.96',
     distance: '3.1 km away',
     eta: '25 mins',
@@ -57,11 +67,13 @@ const RADAR_PINGS = [
     status: 'EN ROUTE',
     verified: true,
     skills: ['Textured Finishes', 'Waterproofing', 'Exterior Spray'],
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'ping-4',
     name: 'Rafiqul Islam',
     trade: 'Precision Structural Carpenter',
+    tradeCategory: 'Carpenter',
     rating: '4.80',
     distance: '1.8 km away',
     eta: '14 mins',
@@ -72,11 +84,13 @@ const RADAR_PINGS = [
     status: 'STANDBY',
     verified: true,
     skills: ['Cabinetry', 'Door Reinforcement', 'Furniture Repair'],
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'ping-5',
     name: 'Farzana Begum',
     trade: 'Bio-Cleanroom Specialist',
+    tradeCategory: 'Cleaner',
     rating: '4.94',
     distance: '0.8 km away',
     eta: '8 mins',
@@ -87,15 +101,20 @@ const RADAR_PINGS = [
     status: 'IMMEDIATE',
     verified: true,
     skills: ['HEPA Steam Sterilization', 'Deep Extraction', 'Anti-Viral'],
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
   },
 ];
 
 const LiveRadarScanner = () => {
   const [selectedPing, setSelectedPing] = useState(RADAR_PINGS[0]);
   const [sweepAngle, setSweepAngle] = useState(0);
-  const [liveWorkersTotal, setLiveWorkersTotal] = useState(142);
+  const [dbWorkers, setDbWorkers] = useState([]);
+  const [bookingWorker, setBookingWorker] = useState(null);
+  const [bookingOffer, setBookingOffer] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Radar sweep animation
   useEffect(() => {
     let animId;
     let angle = 0;
@@ -108,15 +127,60 @@ const LiveRadarScanner = () => {
     return () => cancelAnimationFrame(animId);
   }, []);
 
+  // Fetch real registered workers from backend
+  useEffect(() => {
+    const fetchWorkers = async () => {
+      try {
+        const { data } = await api.get('/workers');
+        setDbWorkers(data || []);
+      } catch (e) {
+        console.error('Could not load radar worker grid:', e);
+      }
+    };
+    fetchWorkers();
+  }, []);
+
+  // Find matching database worker for the selected radar ping
+  const matchedDbWorker = dbWorkers.find((w) => {
+    const nameA = (w.user?.name || w.user_id?.name || '').toLowerCase();
+    const pingFirstName = selectedPing.name.split(' ')[0].toLowerCase();
+    const serviceType = (w.service_type || '').toLowerCase();
+    return nameA.includes(pingFirstName) || serviceType.includes(selectedPing.tradeCategory.toLowerCase());
+  });
+
   const handleSelectPing = (ping) => {
     setSelectedPing(ping);
     playBlip(1800);
   };
 
-  const handleDispatch = (trade) => {
+  // Instant Dispatch Unit: open direct booking modal if matched worker exists, or navigate with correct trade filter
+  const handleInstantDispatch = () => {
     playEngage();
+    if (matchedDbWorker) {
+      setBookingWorker(matchedDbWorker);
+      setBookingOffer(matchedDbWorker.offers?.[0] || null);
+    } else {
+      scrollToTop();
+      navigate(`/browse?trade=${encodeURIComponent(selectedPing.tradeCategory)}&search=${encodeURIComponent(selectedPing.name.split(' ')[0])}`);
+    }
+  };
+
+  // View specialist profile or browse
+  const handleViewProfile = () => {
+    playClick();
     scrollToTop();
-    navigate(`/browse?trade=${encodeURIComponent(trade)}`);
+    if (matchedDbWorker?._id) {
+      navigate(`/workers/${matchedDbWorker._id}`);
+    } else {
+      navigate(`/browse?trade=${encodeURIComponent(selectedPing.tradeCategory)}`);
+    }
+  };
+
+  // Clicking competency badge filters specialists by that skill
+  const handleSkillClick = (skill) => {
+    playClick();
+    scrollToTop();
+    navigate(`/browse?search=${encodeURIComponent(skill)}`);
   };
 
   return (
@@ -142,7 +206,7 @@ const LiveRadarScanner = () => {
             </span>
           </h2>
           <p className="mt-4 text-sm sm:text-base text-stone-600 leading-relaxed">
-            Every verified trade specialist transmits active operational beacons. Click on any radar blip to inspect live distance, dispatch latency, and locked pricing.
+            Every verified trade specialist transmits active operational beacons. Click on any radar blip to inspect live distance, dispatch latency, locked pricing, and trigger instant dispatch.
           </p>
         </div>
 
@@ -196,9 +260,11 @@ const LiveRadarScanner = () => {
                 return (
                   <button
                     key={ping.id}
+                    type="button"
                     onClick={() => handleSelectPing(ping)}
                     style={{ left: `${ping.x}%`, top: `${ping.y}%` }}
                     className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group focus:outline-none"
+                    title={`Click to inspect ${ping.name} (${ping.trade})`}
                   >
                     {/* Ping Ripple */}
                     <span className="absolute inset-0 -m-2 rounded-full bg-[#C2410C]/20 animate-ping pointer-events-none" />
@@ -255,8 +321,19 @@ const LiveRadarScanner = () => {
 
                 {/* Worker Avatar & Title */}
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white font-display font-extrabold text-2xl flex items-center justify-center shadow-md shadow-amber-600/20 flex-shrink-0">
-                    {selectedPing.name.charAt(0)}
+                  <div className="relative">
+                    {selectedPing.avatar ? (
+                      <img
+                        src={selectedPing.avatar}
+                        alt={selectedPing.name}
+                        className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-200 shadow-md shadow-amber-600/20 flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D4AF37] text-white font-display font-extrabold text-2xl flex items-center justify-center shadow-md shadow-amber-600/20 flex-shrink-0">
+                        {selectedPing.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white" />
                   </div>
 
                   <div>
@@ -307,37 +384,57 @@ const LiveRadarScanner = () => {
                 {/* Skills Chips */}
                 <div className="mt-5">
                   <span className="text-[10px] font-mono text-amber-800/70 uppercase tracking-wider block mb-2 font-semibold">
-                    Verified Competencies
+                    Verified Competencies (Click to explore)
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedPing.skills.map((s) => (
-                      <span
+                      <button
                         key={s}
-                        className="px-2.5 py-1 rounded-md text-xs font-mono bg-amber-50/50 text-stone-700 border border-amber-200/60"
+                        type="button"
+                        onClick={() => handleSkillClick(s)}
+                        className="px-2.5 py-1 rounded-md text-xs font-mono bg-amber-50/50 hover:bg-amber-100 text-stone-700 border border-amber-200/60 transition-colors"
+                        title={`Filter specialists by skill: ${s}`}
                       >
                         {s}
-                      </span>
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Dispatch Call to Action */}
-                <div className="mt-8 pt-6 border-t border-amber-100 flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={() => handleDispatch(selectedPing.trade.split(' ')[0])}
-                    className="flex-1 py-3.5 px-5 rounded-xl bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] hover:from-[#70102d] hover:via-[#a83508] hover:to-[#b45309] text-white font-display font-extrabold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2"
-                  >
-                    <span>Instant Dispatch Unit</span>
-                    <HiArrowRight className="text-base" />
-                  </button>
+                {/* Dispatch Call to Action Buttons */}
+                <div className="mt-8 pt-6 border-t border-amber-100 flex flex-col gap-2.5">
+                  <div className="flex flex-col sm:flex-row gap-2.5">
+                    {/* Primary: Instant Dispatch Unit */}
+                    <button
+                      type="button"
+                      onClick={handleInstantDispatch}
+                      className="flex-1 py-3.5 px-5 rounded-xl bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] hover:from-[#70102d] hover:via-[#a83508] hover:to-[#b45309] text-white font-display font-extrabold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2 group"
+                    >
+                      <HiOutlineLightningBolt className="text-base group-hover:scale-110 transition-transform" />
+                      <span>Instant Dispatch Unit</span>
+                      <HiArrowRight className="text-base group-hover:translate-x-1 transition-transform" />
+                    </button>
 
+                    {/* Secondary: View Specialist Profile */}
+                    <button
+                      type="button"
+                      onClick={handleViewProfile}
+                      className="py-3.5 px-4 rounded-xl bg-white hover:bg-amber-50 text-stone-800 border border-amber-300 font-mono text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                      title="Inspect full technician dossier"
+                    >
+                      <HiOutlineEye className="text-sm text-[#C2410C]" />
+                      <span>View Dossier</span>
+                    </button>
+                  </div>
+
+                  {/* Hotline Link */}
                   <a
                     href="tel:+8801717408075"
-                    className="py-3.5 px-4 rounded-xl bg-amber-50/60 hover:bg-amber-100/90 text-stone-800 border border-amber-200/80 font-mono text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
-                    title="Direct Support Hotline"
+                    className="py-2.5 px-4 rounded-xl bg-amber-50/60 hover:bg-amber-100 text-stone-800 border border-amber-200/80 font-mono text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                    title="Direct Support Hotline with Founder Tasin Islam"
                   >
                     <HiOutlinePhone className="text-sm text-[#C2410C]" />
-                    <span>Call Hotline</span>
+                    <span>Direct Emergency Dispatch Line: +8801717408075</span>
                   </a>
                 </div>
               </motion.div>
@@ -345,6 +442,23 @@ const LiveRadarScanner = () => {
           </div>
         </div>
       </div>
+
+      {/* Direct Booking Modal for Instant Dispatch */}
+      {bookingWorker && (
+        <BookingModal
+          worker={bookingWorker}
+          offer={bookingOffer}
+          onClose={() => {
+            setBookingWorker(null);
+            setBookingOffer(null);
+          }}
+          onSuccess={() => {
+            setBookingWorker(null);
+            setBookingOffer(null);
+            navigate('/bookings');
+          }}
+        />
+      )}
     </section>
   );
 };

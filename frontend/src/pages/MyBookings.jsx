@@ -19,6 +19,7 @@ import {
   HiOutlineDocumentText,
   HiOutlineClipboardCopy,
   HiCheck,
+  HiX,
 } from 'react-icons/hi';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -325,18 +326,28 @@ const PaymentForm = ({ booking, onDone, onCancel }) => {
 // --- Modern Dispute Form Component ---
 const DisputeForm = ({ booking, onDone, onCancel }) => {
   const [reason, setReason] = useState('');
+  const [category, setCategory] = useState('Work Quality Issue');
   const [submitting, setSubmitting] = useState(false);
+
+  const disputeCategories = [
+    'Work Quality Issue',
+    'Specialist No-Show / Delay',
+    'Pricing / Tariff Disagreement',
+    'Unprofessional Conduct',
+    'Other Platform Issue',
+  ];
 
   const submit = async (e) => {
     e.preventDefault();
     if (!reason.trim()) return;
     setSubmitting(true);
     try {
+      const fullReason = `[${category}] ${reason.trim()}`;
       await api.post('/disputes', {
         booking_id: booking._id,
-        reason: reason.trim(),
+        reason: fullReason,
       });
-      toast.success('Dispute submitted for admin review and arbitration.');
+      toast.success('Dispute submitted! Request sent to Admin profile for immediate arbitration.');
       onDone();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not raise dispute');
@@ -352,12 +363,12 @@ const DisputeForm = ({ booking, onDone, onCancel }) => {
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
-      className="mt-4 p-5 rounded-2xl bg-rose-50/70 border border-rose-200"
+      className="mt-4 p-5 rounded-2xl bg-rose-50/80 border border-rose-200 shadow-sm"
     >
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold uppercase tracking-wider text-rose-900 flex items-center gap-1.5">
           <HiExclamationCircle className="text-rose-600 text-base" />
-          Raise Dispute on Job #{bookingCode}
+          Raise Dispute on Job #{bookingCode} (Escalates to Admin)
         </span>
         <button
           type="button"
@@ -368,25 +379,54 @@ const DisputeForm = ({ booking, onDone, onCancel }) => {
         </button>
       </div>
 
-      <form onSubmit={submit} className="space-y-3">
+      <form onSubmit={submit} className="space-y-3.5">
         <p className="text-xs text-rose-800 leading-relaxed">
-          Platform leadership (Founder Tasin Islam &amp; Co-Founders Ahosan Habib and Farhan Ahmed) review disputes to mediate between customers and specialists. Please detail the issue:
+          Disputes are sent directly to the <strong>Platform Admin Profile</strong> (Founder Tasin Islam &amp; Co-Founders) for formal investigation and binding resolution.
         </p>
-        <textarea
-          required
-          rows={3}
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder="Explain the problem (e.g. incomplete work, billing disagreement, specialist no-show)..."
-          className="w-full border border-rose-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-rose-600 bg-white resize-none"
-        />
-        <div className="flex justify-end gap-2">
+
+        <div>
+          <label className="text-xs font-bold uppercase tracking-wider text-rose-950 block mb-1">
+            Dispute Reason Category
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {disputeCategories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategory(cat)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                  category === cat
+                    ? 'bg-rose-700 text-white shadow-xs'
+                    : 'bg-white border border-rose-200 text-rose-900 hover:bg-rose-100/60'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-bold uppercase tracking-wider text-rose-950 block mb-1">
+            Detailed Explanation &amp; Evidence
+          </label>
+          <textarea
+            required
+            rows={3}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Explain the specific problem (e.g. unfinished work, delay, billing disagreement)..."
+            className="w-full border border-rose-200 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-rose-600 bg-white resize-none"
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-1">
           <button
             type="submit"
             disabled={submitting}
-            className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs transition-colors shadow-sm disabled:opacity-60"
+            className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors shadow-sm disabled:opacity-60 flex items-center gap-1.5"
           >
-            {submitting ? 'Submitting…' : 'Submit Dispute for Review'}
+            {submitting ? 'Escalating to Admin…' : 'Submit Dispute to Admin Profile'}
           </button>
         </div>
       </form>
@@ -421,22 +461,30 @@ const MyBookings = () => {
     load();
   }, []);
 
-  const advance = async (booking) => {
+  const updateStatus = async (booking, newStatus) => {
     try {
-      await api.put(`/bookings/${booking._id}/status`, { status: NEXT_STATUS[booking.status] });
-      toast.success(`Job advanced to ${NEXT_STATUS[booking.status].replace('_', ' ')}`);
+      await api.put(`/bookings/${booking._id}/status`, { status: newStatus });
+      if (newStatus === 'accepted') toast.success('Booking accepted! Customer has been notified.');
+      else if (newStatus === 'completed') toast.success('Booking marked as completed! Customer can now rate and settle payment.');
+      else if (newStatus === 'in_progress') toast.success('Job marked as in-progress.');
+      else toast.success(`Job status updated to ${newStatus}`);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Update failed');
+      toast.error(err.response?.data?.message || 'Status update failed');
     }
   };
 
-  const cancel = async (booking) => {
-    if (!window.confirm('Are you sure you want to cancel this booking?')) return;
+  const advance = async (booking) => {
+    const next = NEXT_STATUS[booking.status];
+    if (next) updateStatus(booking, next);
+  };
+
+  const cancel = async (booking, reasonText = 'Cancelled by user') => {
+    if (!window.confirm('Are you sure you want to cancel or decline this booking?')) return;
     try {
       await api.put(`/bookings/${booking._id}/status`, {
         status: 'cancelled',
-        cancellation_reason: 'Cancelled by user',
+        cancellation_reason: reasonText,
       });
       toast.success('Booking cancelled');
       load();
@@ -541,9 +589,19 @@ const MyBookings = () => {
 
               const customerName = b.customer_id?.name || 'Customer';
               const customerPhone = b.customer_id?.phone || 'Verified';
-              const workerName = b.worker_id?.user_id?.name || 'Specialist';
-              const workerPhone = b.worker_id?.user_id?.phone || 'Verified';
+              const customerAvatar = b.customer_id?.avatar || b.customer?.avatar || '';
+
+              const workerName = b.worker_id?.user_id?.name || b.worker_id?.user?.name || 'Specialist';
+              const workerPhone = b.worker_id?.user_id?.phone || b.worker_id?.user?.phone || 'Verified';
+              const workerAvatar =
+                b.worker_id?.user?.avatar ||
+                b.worker_id?.user_id?.avatar ||
+                b.worker?.user?.avatar ||
+                '';
               const workerTrade = b.worker_id?.service_type || b.service_id?.service_name || 'Trade Specialist';
+
+              const displayAvatar = isCustomer ? workerAvatar : customerAvatar;
+              const displayName = isCustomer ? workerName : customerName;
 
               return (
                 <motion.div
@@ -553,50 +611,77 @@ const MyBookings = () => {
                   transition={{ delay: Math.min(i * 0.04, 0.25) }}
                   className="bg-white rounded-2xl p-6 border border-amber-200/80 shadow-md shadow-amber-900/5 hover:shadow-lg transition-shadow"
                 >
-                  {/* Card Top: Code, Service Name, Status */}
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-xs font-bold text-[#9A3412] bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
-                          #{bookingCode}
-                        </span>
-                        <h2 className="text-lg font-bold text-stone-900">
-                          {b.service_id?.service_name || 'Service Dispatch'}
-                        </h2>
+                  {/* Card Top: Avatar, Service Name, Status */}
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="flex items-start gap-3.5">
+                      <div className="relative shrink-0">
+                        {displayAvatar ? (
+                          <img
+                            src={displayAvatar}
+                            alt={displayName}
+                            className="w-12 h-12 rounded-xl object-cover border border-amber-200 shadow-xs"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-bold text-lg shadow-xs">
+                            {displayName.charAt(0) || 'U'}
+                          </div>
+                        )}
+                        <span
+                          className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                            b.status === 'completed'
+                              ? 'bg-emerald-500'
+                              : b.status === 'accepted' || b.status === 'in_progress'
+                              ? 'bg-amber-500'
+                              : b.status === 'cancelled'
+                              ? 'bg-rose-500'
+                              : 'bg-stone-400'
+                          }`}
+                        />
                       </div>
 
-                      {/* Participant Details */}
-                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-stone-600">
-                        {isCustomer && (
-                          <div className="flex items-center gap-1.5">
-                            <HiOutlineBriefcase className="text-[#C2410C]" />
-                            <span>Specialist:</span>
-                            <span className="font-semibold text-stone-800">{workerName}</span>
-                            <span className="text-stone-400">({workerTrade})</span>
-                            <span className="text-stone-400">• {workerPhone}</span>
-                          </div>
-                        )}
+                      <div>
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-mono text-xs font-bold text-[#9A3412] bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
+                            #{bookingCode}
+                          </span>
+                          <h2 className="text-lg font-bold text-stone-900">
+                            {b.service_id?.service_name || 'Service Dispatch'}
+                          </h2>
+                        </div>
 
-                        {isWorker && (
-                          <div className="flex items-center gap-1.5">
-                            <HiOutlineUser className="text-[#C2410C]" />
-                            <span>Client:</span>
-                            <span className="font-semibold text-stone-800">{customerName}</span>
-                            <span className="text-stone-400">• {customerPhone}</span>
-                          </div>
-                        )}
+                        {/* Participant Details */}
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-stone-600">
+                          {isCustomer && (
+                            <div className="flex items-center gap-1.5">
+                              <HiOutlineBriefcase className="text-[#C2410C]" />
+                              <span>Specialist:</span>
+                              <span className="font-semibold text-stone-800">{workerName}</span>
+                              <span className="text-stone-400">({workerTrade})</span>
+                              <span className="text-stone-400">• {workerPhone}</span>
+                            </div>
+                          )}
 
-                        {isAdmin && (
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span>
-                              Client: <strong className="text-stone-800">{customerName}</strong>
-                            </span>
-                            <span>•</span>
-                            <span>
-                              Specialist: <strong className="text-stone-800">{workerName}</strong> ({workerTrade})
-                            </span>
-                          </div>
-                        )}
+                          {isWorker && (
+                            <div className="flex items-center gap-1.5">
+                              <HiOutlineUser className="text-[#C2410C]" />
+                              <span>Client:</span>
+                              <span className="font-semibold text-stone-800">{customerName}</span>
+                              <span className="text-stone-400">• {customerPhone}</span>
+                            </div>
+                          )}
+
+                          {isAdmin && (
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span>
+                                Client: <strong className="text-stone-800">{customerName}</strong>
+                              </span>
+                              <span>•</span>
+                              <span>
+                                Specialist: <strong className="text-stone-800">{workerName}</strong> ({workerTrade})
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -680,19 +765,64 @@ const MyBookings = () => {
 
                   {/* Actions Bar */}
                   <div className="mt-5 pt-3 border-t border-stone-100 flex flex-wrap items-center gap-2.5">
-                    {/* Worker advance button */}
-                    {isWorker && NEXT_STATUS[b.status] && (
+                    {/* Worker Accept & Decline Buttons (Pending State) */}
+                    {(isWorker || isAdmin) && b.status === 'pending' && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(b, 'accepted')}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+                        >
+                          <HiCheck className="text-sm font-bold" />
+                          <span>Accept Booking</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => cancel(b, 'Declined by specialist')}
+                          className="px-3.5 py-2 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold transition flex items-center gap-1"
+                        >
+                          <HiX className="text-sm" />
+                          <span>Decline</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Worker Start Job & Complete Booking Buttons (Accepted State) */}
+                    {(isWorker || isAdmin) && b.status === 'accepted' && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(b, 'in_progress')}
+                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+                        >
+                          <HiOutlineClock className="text-sm" />
+                          <span>Start Job (In Progress)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(b, 'completed')}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+                        >
+                          <HiCheckCircle className="text-sm" />
+                          <span>Complete Booking</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Worker Complete Booking Button (In Progress State) */}
+                    {(isWorker || isAdmin) && b.status === 'in_progress' && (
                       <button
                         type="button"
-                        onClick={() => advance(b)}
-                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#881337] to-[#C2410C] hover:from-[#9F1239] hover:to-[#EA580C] text-white text-xs font-bold shadow-sm transition"
+                        onClick={() => updateStatus(b, 'completed')}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5"
                       >
-                        Advance to {NEXT_STATUS[b.status].replace('_', ' ')}
+                        <HiCheckCircle className="text-sm" />
+                        <span>Complete Booking</span>
                       </button>
                     )}
 
-                    {/* Cancel button */}
-                    {['pending', 'accepted'].includes(b.status) && (
+                    {/* Cancel button (Customer or Admin) */}
+                    {isCustomer && ['pending', 'accepted'].includes(b.status) && (
                       <button
                         type="button"
                         onClick={() => cancel(b)}
@@ -728,17 +858,18 @@ const MyBookings = () => {
                       </button>
                     )}
 
-                    {/* Raise Dispute button */}
-                    {b.status !== 'pending' && !activeDispute && (
+                    {/* Feature 2: Dispute button - Available after accepting the booking (accepted, in_progress, or completed) */}
+                    {['accepted', 'in_progress', 'completed'].includes(b.status) && !activeDispute && (
                       <button
                         type="button"
                         onClick={() => toggleAction(b._id, 'dispute')}
-                        className="px-3.5 py-2 rounded-xl border border-stone-200 text-stone-600 hover:text-rose-600 hover:border-rose-200 text-xs font-semibold transition flex items-center gap-1"
+                        className="px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50/50 text-rose-700 hover:bg-rose-100 hover:text-rose-900 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                        title="Escalate an issue directly to Admin profile for arbitration"
                       >
-                        <HiOutlineExclamationCircle className="text-sm" />
+                        <HiOutlineExclamationCircle className="text-sm text-rose-600" />
                         {activeAction.id === b._id && activeAction.type === 'dispute'
                           ? 'Close Dispute'
-                          : 'Raise Dispute'}
+                          : 'Raise Dispute to Admin'}
                       </button>
                     )}
                   </div>

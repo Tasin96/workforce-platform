@@ -25,6 +25,19 @@ const createBooking = asyncHandler(async (req, res) => {
     throw new Error('worker_id and date_time are required');
   }
 
+  const bookingDate = new Date(date_time);
+  if (isNaN(bookingDate.getTime())) {
+    res.status(400);
+    throw new Error('Valid date_time is required');
+  }
+
+  // Ensure user can only book for present or future (allow 5-minute buffer for client-server sync)
+  const nowBuffer = new Date(Date.now() - 5 * 60 * 1000);
+  if (bookingDate < nowBuffer) {
+    res.status(400);
+    throw new Error('Booking date and time must be in the present or future. Past dates cannot be booked.');
+  }
+
   const workerProfile = await WorkerProfile.findByPk(worker_id);
   if (!workerProfile) {
     res.status(404);

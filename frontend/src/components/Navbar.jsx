@@ -140,9 +140,34 @@ const Navbar = () => {
                 <HiOutlineBell className="text-lg" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#C2410C] rounded-full animate-pulseDot" />
               </NavLink>
-              <span className="text-xs text-stone-900 font-mono font-bold">
-                {user.name?.split(' ')[0]}
-              </span>
+
+              <Link
+                to="/profile"
+                onClick={() => { playClick(); scrollToTop(); }}
+                className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-amber-50/70 border border-amber-200/80 hover:border-amber-400 transition-all group"
+                title="View & Edit Profile"
+              >
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-7 h-7 rounded-lg object-cover border border-amber-300 shadow-xs"
+                  />
+                ) : (
+                  <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-display font-bold text-xs shadow-xs">
+                    {user.name?.charAt(0) || 'U'}
+                  </span>
+                )}
+                <div className="flex flex-col text-left">
+                  <span className="text-xs text-stone-900 font-mono font-bold leading-tight group-hover:text-[#881337] transition-colors">
+                    {user.name?.split(' ')[0]}
+                  </span>
+                  <span className="text-[9px] font-mono text-[#C2410C] uppercase font-semibold">
+                    {user.role}
+                  </span>
+                </div>
+              </Link>
+
               <button
                 onClick={handleLogout}
                 className="px-3.5 py-1.5 rounded-lg bg-stone-100/80 border border-stone-300 text-stone-700 text-xs font-mono font-bold hover:bg-rose-50 hover:border-rose-300 hover:text-[#881337] transition-colors"
@@ -193,6 +218,29 @@ const Navbar = () => {
             className="md:hidden overflow-hidden bg-white border-t border-amber-200/70"
           >
             <div className="flex flex-col gap-1.5 px-5 py-4">
+              {user && (
+                <Link
+                  to="/profile"
+                  onClick={() => { setOpen(false); scrollToTop(); }}
+                  className="flex items-center gap-3 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200 mb-2"
+                >
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-10 h-10 rounded-lg object-cover border border-amber-300"
+                    />
+                  ) : (
+                    <span className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#881337] via-[#C2410C] to-[#D97706] text-white flex items-center justify-center font-bold text-sm">
+                      {user.name?.charAt(0) || 'U'}
+                    </span>
+                  )}
+                  <div>
+                    <div className="text-xs font-bold text-stone-900">{user.name}</div>
+                    <div className="text-[10px] font-mono text-[#C2410C] uppercase font-semibold">{user.role} • Profile &amp; Picture</div>
+                  </div>
+                </Link>
+              )}
               <NavLink onClick={() => { setOpen(false); scrollToTop(); }} to="/" end className="py-2 text-sm font-mono text-stone-700">HOME</NavLink>
               <NavLink onClick={() => { setOpen(false); scrollToTop(); }} to="/browse" className="py-2 text-sm font-mono text-stone-700">FIND WORKERS</NavLink>
               {user && <NavLink onClick={() => { setOpen(false); scrollToTop(); }} to="/dashboard" className="py-2 text-sm font-mono text-stone-700">DASHBOARD</NavLink>}

@@ -47,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email: user.email,
     role: user.role,
     location: user.location,
+    avatar: user.avatar || '',
     token: generateToken(user.user_id),
   });
 });
