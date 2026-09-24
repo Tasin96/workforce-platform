@@ -129,11 +129,6 @@ const Hero = () => {
               </span>
             </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-stone-600 max-w-xl leading-relaxed">
-              Instantly connect with verified electricians, master plumbers, precision painters, and technicians.
-              Locked tariffs in BDT, sub-15 minute dispatch, and automated cryptographic escrow settlement.
-            </p>
-
             {/* Futuristic Search Capsule */}
             <form
               onSubmit={handleSearch}
