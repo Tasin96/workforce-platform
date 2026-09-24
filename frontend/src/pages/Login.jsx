@@ -2,48 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck, HiArrowRight, HiOutlineSparkles } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck, HiArrowRight } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { scrollToTop } from '../components/ScrollToTop';
-
-const DEMO_ACCOUNTS = [
-  {
-    role: 'Admin',
-    name: 'Tasin Islam',
-    email: 'admin@workforce.app',
-    password: 'admin123',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    badge: 'Founder & Admin',
-    badgeColor: 'bg-rose-50 text-[#881337] border-rose-200',
-  },
-  {
-    role: 'Customer',
-    name: 'Tasin Islam',
-    email: 'customer@workforce.app',
-    password: 'customer123',
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
-    badge: 'Verified Client',
-    badgeColor: 'bg-amber-50 text-[#9A3412] border-amber-200',
-  },
-  {
-    role: 'Worker',
-    name: 'Karim Sheikh',
-    email: 'karim.electrician@workforce.app',
-    password: 'worker123',
-    avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80',
-    badge: 'Electrician (Worker)',
-    badgeColor: 'bg-orange-50 text-[#C2410C] border-orange-200',
-  },
-  {
-    role: 'Worker',
-    name: 'Jahangir Alam',
-    email: 'jahangir.plumber@workforce.app',
-    password: 'worker123',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    badge: 'Plumber (Worker)',
-    badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  },
-];
 
 const Login = () => {
   const { login, loading } = useAuth();
@@ -58,17 +19,6 @@ const Login = () => {
       navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid email or password');
-    }
-  };
-
-  const handleQuickDemoLogin = async (acc) => {
-    setForm({ email: acc.email, password: acc.password });
-    try {
-      await login(acc.email, acc.password);
-      toast.success(`Logged in as ${acc.name} (${acc.role})!`);
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Demo login failed');
     }
   };
 
@@ -97,41 +47,6 @@ const Login = () => {
           <p className="mt-1 text-sm text-stone-500">
             Log in to manage appointments, payments, and workforce dispatch.
           </p>
-        </div>
-
-        {/* Feature 1 Demo Profiles Grid: 1-Click Fast Login with Real Avatars */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50/70 via-orange-50/40 to-amber-50/70 border border-amber-200/90 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
-              <HiOutlineSparkles className="text-[#C2410C]" />
-              Quick Demo Accounts (1-Click Login)
-            </span>
-            <span className="text-[10px] font-mono text-stone-400">Click to switch</span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            {DEMO_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.email}
-                type="button"
-                onClick={() => handleQuickDemoLogin(acc)}
-                className="p-2.5 rounded-xl bg-white hover:bg-amber-100/50 border border-amber-200 hover:border-[#C2410C] transition-all flex items-center gap-2.5 text-left shadow-xs group"
-                title={`Log in as ${acc.name} (${acc.role})`}
-              >
-                <img
-                  src={acc.avatar}
-                  alt={acc.name}
-                  className="w-10 h-10 rounded-xl object-cover border border-amber-200 shadow-xs shrink-0 group-hover:scale-105 transition-transform"
-                />
-                <div className="truncate">
-                  <div className="text-xs font-bold text-stone-900 truncate">{acc.name}</div>
-                  <span className={`inline-block text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border mt-0.5 ${acc.badgeColor}`}>
-                    {acc.badge}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Form */}
