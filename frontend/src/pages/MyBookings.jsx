@@ -740,6 +740,81 @@ const MyBookings = () => {
                     </p>
                   )}
 
+                  {/* Booking Lifecycle Progress Stepper */}
+                  {b.status !== 'cancelled' ? (
+                    <div className="mt-4 pt-3 border-t border-stone-100">
+                      <div className="grid grid-cols-4 gap-1 text-center">
+                        {[
+                          { id: 'pending', label: '1. Requested' },
+                          { id: 'accepted', label: '2. Accepted' },
+                          { id: 'in_progress', label: '3. In Progress' },
+                          { id: 'completed', label: '4. Completed' },
+                        ].map((st, sIdx) => {
+                          const order = ['pending', 'accepted', 'in_progress', 'completed'];
+                          const currentIdx = order.indexOf(b.status);
+                          const isDone = currentIdx >= sIdx;
+                          const isCurrent = currentIdx === sIdx;
+
+                          return (
+                            <div key={st.id} className="flex flex-col items-center">
+                              <div className="flex items-center w-full">
+                                <div
+                                  className={`h-1 w-full rounded-full transition-all ${
+                                    sIdx === 0
+                                      ? 'opacity-0'
+                                      : isDone
+                                      ? 'bg-gradient-to-r from-[#881337] to-[#C2410C]'
+                                      : 'bg-stone-200'
+                                  }`}
+                                />
+                                <div
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all ${
+                                    isCurrent
+                                      ? 'bg-[#C2410C] text-white ring-4 ring-[#C2410C]/20 shadow-xs'
+                                      : isDone
+                                      ? 'bg-[#881337] text-white'
+                                      : 'bg-stone-100 text-stone-400 border border-stone-200'
+                                  }`}
+                                >
+                                  {isDone && !isCurrent ? '✓' : sIdx + 1}
+                                </div>
+                                <div
+                                  className={`h-1 w-full rounded-full transition-all ${
+                                    sIdx === 3
+                                      ? 'opacity-0'
+                                      : currentIdx > sIdx
+                                      ? 'bg-gradient-to-r from-[#881337] to-[#C2410C]'
+                                      : 'bg-stone-200'
+                                  }`}
+                                />
+                              </div>
+                              <span
+                                className={`text-[10px] mt-1 font-semibold truncate ${
+                                  isCurrent
+                                    ? 'text-[#C2410C] font-bold'
+                                    : isDone
+                                    ? 'text-stone-800'
+                                    : 'text-stone-400'
+                                }`}
+                              >
+                                {st.label}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-3 p-3 rounded-xl bg-rose-50/80 border border-rose-200 text-xs text-rose-800 flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-bold">❌ Booking Cancelled</span>
+                      {b.cancellation_reason && (
+                        <span className="text-[11px] text-stone-600 italic">
+                          Note: "{b.cancellation_reason}"
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   {/* Badges for Payments, Reviews, and Disputes */}
                   <div className="mt-4 flex flex-wrap gap-2 items-center">
                     {/* Payment chip */}
