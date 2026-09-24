@@ -74,15 +74,35 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+const { serializeUser, serializeWorkerProfile, serializeOffer, serializeAvailability } = require('../utils/serializers');
+const { WorkerProfile, WorkerServiceOffer, Availability, Service } = require('../models');
+
 // @desc Get logged-in user profile
 // @route GET /api/auth/me
 const getMe = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.user_id);
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
   let workerProfile = null;
   if (user.role === 'worker') {
-    workerProfile = await WorkerProfile.findOne({ where: { user_id: user.user_id } });
+    const wp = await WorkerProfile.findOne({
+      where: { user_id: user.user_id },
+      include: [
+        { model: WorkerServiceOffer, as: 'offers', include: [{ model: Service, as: 'service' }] },
+        { model: Availability, as: 'availability' },
+      ],
+    });
+    if (wp) {
+      workerProfile = {
+        ...serializeWorkerProfile(wp),
+        offers: (wp.offers || []).map(serializeOffer),
+        availability: (wp.availability || []).map(serializeAvailability),
+      };
+    }
   }
-  res.json({ user, workerProfile });
+  res.json({ user: serializeUser(user), workerProfile });
 });
 
 module.exports = { registerUser, loginUser, getMe };

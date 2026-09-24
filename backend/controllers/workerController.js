@@ -96,9 +96,42 @@ const updateMyWorkerProfile = asyncHandler(async (req, res) => {
   profile.service_type = req.body.service_type ?? profile.service_type;
   profile.experience = req.body.experience ?? profile.experience;
   profile.bio = req.body.bio ?? profile.bio;
-  profile.skills = req.body.skills ?? profile.skills;
+  if (req.body.skills !== undefined) {
+    profile.skills = Array.isArray(req.body.skills)
+      ? req.body.skills
+      : typeof req.body.skills === 'string'
+      ? req.body.skills.split(',').map((s) => s.trim()).filter(Boolean)
+      : profile.skills;
+  }
   await profile.save();
-  res.json(serializeWorkerProfile(profile, { includeUser: false }));
+
+  // If hourly_rate or fixed_price provided, update default service offer
+  if (req.body.hourly_rate !== undefined || req.body.fixed_price !== undefined) {
+    let matchingService = await Service.findOne({
+      where: { service_name: { [Op.iLike]: `%${profile.service_type || ''}%` } },
+    });
+    if (!matchingService) {
+      matchingService = await Service.findOne();
+    }
+    if (matchingService) {
+      await WorkerServiceOffer.upsert({
+        worker_id: profile.worker_id,
+        service_id: matchingService.service_id,
+        hourly_rate: req.body.hourly_rate !== undefined ? parseFloat(req.body.hourly_rate) : null,
+        fixed_price: req.body.fixed_price !== undefined ? parseFloat(req.body.fixed_price) : null,
+      });
+    }
+  }
+
+  const updatedOffers = await WorkerServiceOffer.findAll({
+    where: { worker_id: profile.worker_id },
+    include: [{ model: Service, as: 'service' }],
+  });
+
+  res.json({
+    ...serializeWorkerProfile(profile, { includeUser: false }),
+    offers: updatedOffers.map(serializeOffer),
+  });
 });
 
 // @desc Add/Update a service offer (hourly_rate / fixed_price) for logged-in worker
