@@ -25,7 +25,7 @@ const features = [
   },
   {
     icon: HiOutlineCurrencyDollar,
-    title: 'PostgreSQL 18 Escrow Settlement',
+    title: 'Secure Escrow Settlement',
     text: 'No ambiguous cash surprises. Real-time pre-authorized tariffs in BDT held securely in transactional escrow until work is signed off.',
     accent: '#881337',
   },
@@ -56,7 +56,7 @@ const FeaturesSection = () => (
     <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none" />
 
     <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
-      <div className="max-w-2xl mb-16">
+      <div className="max-w-2xl mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold tracking-wider mb-3 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
           <span>ENTERPRISE ARCHITECTURE • GLOBAL BENCHMARKS</span>
@@ -68,9 +68,6 @@ const FeaturesSection = () => (
             Uncompromising Trust.
           </span>
         </h2>
-        <p className="mt-4 text-stone-600 text-sm sm:text-base leading-relaxed">
-          The next-generation workforce infrastructure connecting certified tradespeople with homes, commercial hubs, and modern organizations.
-        </p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
