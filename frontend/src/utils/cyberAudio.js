@@ -1,4 +1,4 @@
-// Futuristic 2026 Web Audio API Synthesizer
+// Futuristic Web Audio API Synthesizer
 // Zero external audio files, pure browser-native procedural sound generation
 
 let audioCtx = null;

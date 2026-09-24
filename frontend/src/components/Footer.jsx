@@ -17,7 +17,7 @@ const Footer = () => (
           </span>
         </Link>
         <p className="text-xs leading-relaxed text-stone-600 max-w-xs mb-4">
-          The 2026 autonomous on-demand dispatch network connecting verified local specialists with households and organizations — fast, transparent, and audited.
+          The autonomous on-demand dispatch network connecting verified local specialists with households and organizations — fast, transparent, and audited.
         </p>
         <div className="text-xs text-stone-600 font-mono space-y-1">
           <div>Founder: <span className="text-[#881337] font-bold">Tasin Islam</span></div>

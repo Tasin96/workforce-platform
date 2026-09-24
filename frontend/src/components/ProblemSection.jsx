@@ -47,7 +47,7 @@ const ProblemSection = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold uppercase tracking-wider mb-3 shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
-              <span>THE 2026 DISPATCH STANDARD</span>
+              <span>THE DISPATCH STANDARD</span>
             </div>
             <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
               Designed for Speed, Certainty,

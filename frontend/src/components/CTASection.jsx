@@ -22,7 +22,7 @@ const CTASection = () => (
         <div className="relative z-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-amber-300/30 text-amber-200 text-xs font-mono font-bold tracking-wider mb-6 shadow-sm">
             <HiOutlineSparkles className="text-amber-300 text-sm animate-spin" style={{ animationDuration: '8s' }} />
-            <span>NEURAL NETWORK OPERATIONAL • 2026 DEPLOYMENT</span>
+            <span>NEURAL NETWORK OPERATIONAL • ACTIVE DEPLOYMENT</span>
           </div>
 
           <h2 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">

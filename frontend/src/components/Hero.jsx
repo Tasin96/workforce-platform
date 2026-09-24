@@ -131,7 +131,7 @@ const Hero = () => {
             {/* Top Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold tracking-wider mb-6 shadow-sm backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulseDot" />
-              <span>THE 2026 NEURAL WORKFORCE GRID</span>
+              <span>THE NEURAL WORKFORCE GRID</span>
               <span className="text-amber-300">|</span>
               <span className="text-[#881337]">AUTONOMOUS DISPATCH</span>
             </div>

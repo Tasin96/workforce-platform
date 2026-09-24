@@ -28,7 +28,7 @@ const Home = () => (
     {/* Interactive 4-Stage Autonomous Dispatch Simulator */}
     <QuantumDispatchSimulator />
 
-    {/* 2026 Workforce Standard */}
+    {/* Workforce Standard */}
     <ProblemSection />
 
     {/* How Dispatch Operates */}

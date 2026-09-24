@@ -46,7 +46,7 @@ PGDATABASE=workforce_platform
 PGUSER=postgres
 PGPASSWORD=Tasin12345
 PG_SSL=false
-JWT_SECRET=tasin_workforce_platform_jwt_secret_key_2026_super_secure
+JWT_SECRET=tasin_workforce_platform_jwt_secret_key_super_secure
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
 ```

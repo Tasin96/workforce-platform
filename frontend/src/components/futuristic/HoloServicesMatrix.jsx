@@ -263,7 +263,7 @@ const HoloServicesMatrix = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
               <span>AUTONOMOUS WORKFORCE MATRIX</span>
               <span className="text-amber-300">|</span>
-              <span className="text-[#881337] font-semibold">2026 ARCHITECTURE</span>
+              <span className="text-[#881337] font-semibold">ADVANCED ARCHITECTURE</span>
             </div>
             <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
               Six Specialized Neural Grids.

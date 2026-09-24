@@ -69,7 +69,7 @@ const QuantumDispatchSimulator = () => {
     playEngage();
     setStage(1);
     setProgress(25);
-    setTxHash(`WF-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
+    setTxHash(`WF-DISPATCH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
   };
 
   const handleReset = () => {
@@ -97,13 +97,13 @@ const QuantumDispatchSimulator = () => {
             <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
             <span>INTERACTIVE SIMULATOR</span>
             <span className="text-amber-300">|</span>
-            <span>2026 DISPATCH PROTOCOL</span>
+            <span>DISPATCH PROTOCOL</span>
           </div>
           <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
             Experience Autonomous Dispatch.
           </h2>
           <p className="mt-4 text-sm sm:text-base text-stone-600 leading-relaxed">
-            Test the 2026 neural dispatch pipeline in real-time. Watch how our geocoding, escrow smart locking, and SLA verification execute in seconds.
+            Test the neural dispatch pipeline in real-time. Watch how our geocoding, escrow smart locking, and SLA verification execute in seconds.
           </p>
         </div>
 

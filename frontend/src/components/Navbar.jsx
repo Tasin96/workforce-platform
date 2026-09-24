@@ -75,9 +75,6 @@ const Navbar = () => {
           </span>
           <span className="font-display font-extrabold text-lg tracking-wider text-stone-900">
             WORK<span className="bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] bg-clip-text text-transparent">FORCE</span>
-            <span className="text-[10px] font-mono text-amber-700/80 ml-1.5 font-bold tracking-widest hidden sm:inline">
-              2026
-            </span>
           </span>
         </Link>
 

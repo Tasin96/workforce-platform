@@ -59,7 +59,7 @@ const FeaturesSection = () => (
       <div className="max-w-2xl mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold tracking-wider mb-3 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
-          <span>ENTERPRISE ARCHITECTURE • 2026 BENCHMARKS</span>
+          <span>ENTERPRISE ARCHITECTURE • GLOBAL BENCHMARKS</span>
         </div>
         <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
           Engineered for Instant Scale.
