@@ -99,57 +99,51 @@ const Navbar = () => {
 
         {/* Right Command Strip */}
         <div className="hidden md:flex items-center gap-3">
-          {/* Support Hotline, Socials & Sound Dropdown */}
-          <div className="relative border-r border-amber-200/60 pr-3 mr-1" ref={dropdownRef}>
+          {/* Compact Support & Sound Dropdown */}
+          <div className="relative border-r border-amber-200/60 pr-2.5 mr-1" ref={dropdownRef}>
             <button
               onClick={() => {
                 playClick();
                 setSupportDropdownOpen((prev) => !prev);
               }}
-              title="Hotline Support, Social Channels & Cyber Audio"
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all shadow-xs ${
+              title="Support Hotline, Social Channels & Audio"
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-mono font-bold transition-all ${
                 supportDropdownOpen
-                  ? 'bg-amber-100/90 border-amber-400 text-[#881337]'
-                  : 'bg-stone-100/90 hover:bg-amber-50/80 border-amber-200/70 text-stone-700 hover:text-[#C2410C]'
+                  ? 'bg-amber-100 border-amber-400 text-[#881337] shadow-xs ring-2 ring-amber-300/40'
+                  : 'bg-white hover:bg-amber-50/80 border-amber-200/90 text-stone-700 hover:text-[#C2410C] shadow-2xs'
               }`}
             >
-              <div className="flex items-center gap-1.5">
-                <span className="text-emerald-600">
-                  <FaWhatsapp className="text-sm" />
-                </span>
-                <span className="text-[#C2410C]">
-                  {soundMuted ? (
-                    <HiOutlineVolumeOff className="text-stone-400 text-sm" />
-                  ) : (
-                    <HiOutlineVolumeUp className="text-[#C2410C] text-sm animate-pulse" />
-                  )}
-                </span>
-                <HiOutlinePhone className="text-sm text-[#C2410C]" />
-              </div>
-              <span className="text-stone-800 font-bold hidden xl:inline">+8801717408075</span>
-              <span className="text-stone-800 font-bold xl:hidden">HOTLINE</span>
+              <HiOutlinePhone className="text-xs text-[#C2410C]" />
+              <span className="text-[11px] font-bold text-stone-800 tracking-tight">Help</span>
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  soundMuted ? 'bg-stone-300' : 'bg-emerald-500 animate-pulse'
+                }`}
+                title={soundMuted ? 'Audio Muted' : 'Audio Active'}
+              />
               <HiChevronDown
-                className={`text-xs transition-transform duration-200 ${
+                className={`text-[10px] transition-transform duration-200 ${
                   supportDropdownOpen ? 'rotate-180 text-[#881337]' : 'text-stone-400'
                 }`}
               />
             </button>
 
-            {/* Dropdown Menu Panel */}
+            {/* Dropdown Menu Panel (Solid 100% Opaque White with Rich Shadow) */}
             <AnimatePresence>
               {supportDropdownOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.96 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-72 rounded-2xl bg-white/98 backdrop-blur-2xl border border-amber-200/90 shadow-2xl p-3 z-50 space-y-2 text-stone-700"
+                  style={{ backgroundColor: '#ffffff' }}
+                  className="absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-amber-300 shadow-[0_20px_50px_rgba(0,0,0,0.18),0_4px_12px_rgba(0,0,0,0.06)] p-2.5 z-[100] space-y-1.5 text-stone-700"
                 >
-                  <div className="px-2 py-1 text-[10px] font-mono font-bold text-amber-800/70 uppercase tracking-wider flex items-center justify-between border-b border-amber-100 pb-2">
-                    <span>Direct Hotline &amp; Social Channels</span>
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulseDot" />
-                      Live
+                  <div className="px-2.5 py-1.5 rounded-xl bg-amber-50/80 border border-amber-100 flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-mono font-bold text-amber-900 tracking-wider">DIRECT CHANNELS</span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      24/7 Live
                     </span>
                   </div>
 
@@ -157,17 +151,22 @@ const Navbar = () => {
                   <a
                     href="tel:+8801717408075"
                     onClick={() => setSupportDropdownOpen(false)}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-amber-50/80 transition-all group border border-transparent hover:border-amber-200/80"
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-amber-50/70 border border-transparent hover:border-amber-200/80 transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#C2410C] flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
-                      <HiOutlinePhone />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-mono font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
-                        +8801717408075
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#C2410C] flex items-center justify-center text-sm border border-orange-200/60 shrink-0 group-hover:scale-105 transition-transform">
+                        <HiOutlinePhone />
                       </div>
-                      <div className="text-[10px] text-stone-500">Founder Direct Hotline</div>
+                      <div>
+                        <div className="text-xs font-mono font-bold text-stone-900 group-hover:text-[#881337] transition-colors">
+                          +8801717408075
+                        </div>
+                        <div className="text-[10px] text-stone-500">Founder Direct Hotline</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-mono font-bold text-[#881337] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                      CALL
+                    </span>
                   </a>
 
                   {/* WhatsApp */}
@@ -176,17 +175,22 @@ const Navbar = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setSupportDropdownOpen(false)}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-emerald-50/70 transition-all group border border-transparent hover:border-emerald-200/80"
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-emerald-50/60 border border-transparent hover:border-emerald-200/80 transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
-                      <FaWhatsapp />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
-                        WhatsApp Live Chat
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm border border-emerald-200/60 shrink-0 group-hover:scale-105 transition-transform">
+                        <FaWhatsapp />
                       </div>
-                      <div className="text-[10px] text-stone-500">Instant Customer Support</div>
+                      <div>
+                        <div className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                          WhatsApp Live Chat
+                        </div>
+                        <div className="text-[10px] text-stone-500">Instant response</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      CHAT
+                    </span>
                   </a>
 
                   {/* Facebook */}
@@ -195,27 +199,30 @@ const Navbar = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setSupportDropdownOpen(false)}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50/70 transition-all group border border-transparent hover:border-blue-200/80"
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-blue-50/60 border border-transparent hover:border-blue-200/80 transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1877F2] flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
-                      <FaFacebook />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-bold text-stone-900 group-hover:text-[#1877F2] transition-colors">
-                        Facebook Official
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1877F2] flex items-center justify-center text-sm border border-blue-200/60 shrink-0 group-hover:scale-105 transition-transform">
+                        <FaFacebook />
                       </div>
-                      <div className="text-[10px] text-stone-500">Tasin Islam Profile</div>
+                      <div>
+                        <div className="text-xs font-bold text-stone-900 group-hover:text-[#1877F2] transition-colors">
+                          Facebook Official
+                        </div>
+                        <div className="text-[10px] text-stone-500">Tasin Islam Profile</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      VISIT
+                    </span>
                   </a>
 
                   {/* Audio Synthesizer Control */}
-                  <div className="pt-2 border-t border-amber-100 flex items-center justify-between px-2.5 py-1.5 bg-amber-50/40 rounded-xl">
+                  <div className="pt-2 border-t border-amber-100 flex items-center justify-between px-2.5 py-1.5 bg-stone-50 rounded-xl">
                     <div className="flex items-center gap-2 text-xs">
-                      {soundMuted ? (
-                        <HiOutlineVolumeOff className="text-stone-400 text-base" />
-                      ) : (
-                        <HiOutlineVolumeUp className="text-[#C2410C] text-base" />
-                      )}
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${soundMuted ? 'bg-stone-200 text-stone-500' : 'bg-amber-100 text-[#C2410C]'}`}>
+                        {soundMuted ? <HiOutlineVolumeOff className="text-sm" /> : <HiOutlineVolumeUp className="text-sm animate-pulse" />}
+                      </div>
                       <div>
                         <div className="text-[11px] font-mono font-bold text-stone-800">Cyber Audio</div>
                         <div className="text-[9px] text-stone-500">{soundMuted ? 'Muted' : 'Sound Effects Active'}</div>
@@ -226,8 +233,8 @@ const Navbar = () => {
                       onClick={handleAudioToggle}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all border ${
                         soundMuted
-                          ? 'bg-white border-stone-300 text-stone-600 hover:border-amber-400'
-                          : 'bg-[#C2410C] border-[#9A3412] text-white shadow-xs'
+                          ? 'bg-white border-stone-300 text-stone-700 hover:border-amber-400'
+                          : 'bg-gradient-to-r from-[#881337] to-[#C2410C] text-white border-transparent shadow-xs'
                       }`}
                     >
                       {soundMuted ? 'UNMUTE' : 'MUTE'}
