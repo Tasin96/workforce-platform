@@ -205,9 +205,6 @@ const LiveRadarScanner = () => {
               Sub-15 Minute Arrival.
             </span>
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-stone-600 leading-relaxed">
-            Every verified trade specialist transmits active operational beacons. Click on any radar blip to inspect live distance, dispatch latency, locked pricing, and trigger instant dispatch.
-          </p>
         </div>
 
         {/* Grid with Radar on Left and Selected Telemetry Card on Right */}

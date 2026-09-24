@@ -257,26 +257,20 @@ const HoloServicesMatrix = () => {
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold tracking-wider mb-3 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
-              <span>AUTONOMOUS WORKFORCE MATRIX</span>
-              <span className="text-amber-300">|</span>
-              <span className="text-[#881337] font-semibold">ADVANCED ARCHITECTURE</span>
-            </div>
-            <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
-              Six Specialized Neural Grids.
-              <br />
-              <span className="bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] bg-clip-text text-transparent">
-                Instantly Mobilized.
-              </span>
-            </h2>
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold tracking-wider mb-3 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
+            <span>AUTONOMOUS WORKFORCE MATRIX</span>
+            <span className="text-amber-300">|</span>
+            <span className="text-[#881337] font-semibold">ADVANCED ARCHITECTURE</span>
           </div>
-
-          <p className="max-w-md text-sm sm:text-base text-stone-600 leading-relaxed">
-            Select an operational trade to inspect certified diagnostic units, locked hourly tariffs, and cryptographic escrow guarantees.
-          </p>
+          <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
+            Six Specialized Neural Grids.
+            <br />
+            <span className="bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] bg-clip-text text-transparent">
+              Instantly Mobilized.
+            </span>
+          </h2>
         </div>
 
         {/* 3D Holo Cards Grid */}

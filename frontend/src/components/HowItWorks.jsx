@@ -48,9 +48,6 @@ const HowItWorks = () => (
         <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
           How the Neural System Operates.
         </h2>
-        <p className="mt-4 text-sm sm:text-base text-stone-600 leading-relaxed">
-          From initial sector ping to final escrow settlement, experience total transparency, speed, and platform protection.
-        </p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">

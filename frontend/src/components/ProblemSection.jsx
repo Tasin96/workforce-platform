@@ -43,23 +43,18 @@ const ProblemSection = () => {
   return (
     <section className="bg-[#FAF8F5] py-24 border-b border-amber-200/60 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
-        <div className="flex items-end justify-between flex-wrap gap-6 mb-14">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold uppercase tracking-wider mb-3 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
-              <span>THE DISPATCH STANDARD</span>
-            </div>
-            <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
-              Designed for Speed, Certainty,
-              <br />
-              <span className="bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] bg-clip-text text-transparent">
-                and Total Accountability.
-              </span>
-            </h2>
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-300/80 text-[#9A3412] text-xs font-mono font-bold uppercase tracking-wider mb-3 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C2410C] animate-pulseDot" />
+            <span>THE DISPATCH STANDARD</span>
           </div>
-          <p className="max-w-md text-stone-600 text-sm sm:text-base leading-relaxed">
-            Traditional trade hiring is slow, opaque, and unpredictable. WorkForce transforms it into an institutional, autonomous utility for every home and facility.
-          </p>
+          <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight">
+            Designed for Speed, Certainty,
+            <br />
+            <span className="bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] bg-clip-text text-transparent">
+              and Total Accountability.
+            </span>
+          </h2>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

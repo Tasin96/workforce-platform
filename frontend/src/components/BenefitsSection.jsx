@@ -42,9 +42,6 @@ const BenefitsSection = () => (
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-stone-900 tracking-tight leading-[1.15]">
             A Zero-Friction Grid for Customers &amp; Craftsmen.
           </h2>
-          <p className="mt-5 text-stone-600 leading-relaxed text-sm sm:text-base">
-            WorkForce eliminates middleman markups and replaces uncertainty with accountable technology, providing peace of mind to homeowners and regular high-paying jobs to skilled professionals.
-          </p>
         </div>
 
         <div className="lg:col-span-7 grid sm:grid-cols-2 gap-5">
