@@ -178,10 +178,40 @@ const addAvailability = asyncHandler(async (req, res) => {
   res.status(201).json(serializeAvailability(slot));
 });
 
+// @desc Delete worker account (admin only)
+// @route DELETE /api/workers/:id
+const deleteWorker = asyncHandler(async (req, res) => {
+  const { removeUserAccount } = require('./userController');
+  const targetId = req.params.id;
+  let worker = await WorkerProfile.findByPk(targetId);
+  let userId = worker ? worker.user_id : null;
+
+  if (!userId) {
+    const user = await User.findByPk(targetId);
+    if (user && user.role === 'worker') {
+      userId = user.user_id;
+    }
+  }
+
+  if (!userId) {
+    res.status(404);
+    throw new Error('Worker profile not found');
+  }
+
+  try {
+    const result = await removeUserAccount(userId, req.user.user_id);
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 500);
+    throw err;
+  }
+});
+
 module.exports = {
   getWorkers,
   getWorkerById,
   updateMyWorkerProfile,
   upsertServiceOffer,
   addAvailability,
+  deleteWorker,
 };

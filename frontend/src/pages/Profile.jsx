@@ -25,6 +25,7 @@ import {
   HiOutlineCheck,
   HiOutlineCurrencyDollar,
   HiOutlineExternalLink,
+  HiOutlineSearch,
 } from 'react-icons/hi';
 import { FaWhatsapp, FaFacebook } from 'react-icons/fa';
 import api from '../api/axios';
@@ -93,6 +94,26 @@ const Profile = () => {
   const [adminDisputes, setAdminDisputes] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
   const [loadingAdminData, setLoadingAdminData] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [deletingUserLoading, setDeletingUserLoading] = useState(false);
+  const [adminUserSearch, setAdminUserSearch] = useState('');
+  const [adminUserRoleFilter, setAdminUserRoleFilter] = useState('all');
+
+  const handleConfirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    setDeletingUserLoading(true);
+    try {
+      const targetId = userToDelete.user_id || userToDelete._id || userToDelete.id;
+      const res = await api.delete(`/users/${targetId}`);
+      toast.success(res.data?.message || `Account for ${userToDelete.name} was successfully removed.`);
+      setUserToDelete(null);
+      await fetchAdminData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to remove account');
+    } finally {
+      setDeletingUserLoading(false);
+    }
+  };
 
   const fetchProfileData = async () => {
     try {
@@ -967,74 +988,255 @@ const Profile = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl border border-amber-200/80 p-6 sm:p-8 shadow-md shadow-amber-900/5 space-y-4"
+            className="bg-white rounded-3xl border border-amber-200/80 p-6 sm:p-8 shadow-md shadow-amber-900/5 space-y-5"
           >
-            <div className="border-b border-amber-100 pb-3 flex items-center justify-between">
+            <div className="border-b border-amber-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-stone-900 flex items-center gap-2">
                   <HiOutlineUsers className="text-lg text-[#C2410C]" /> Registered Platform Users Directory
                 </h2>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-500 mt-0.5">
                   Global roster of verified customers, specialists, and platform administrators.
                 </p>
               </div>
-              <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-[#881337] border border-amber-200">
-                {adminUsers.length} Users
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-[#881337] border border-amber-200">
+                  {adminUsers.length} Total Registered
+                </span>
+              </div>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Filter and Search Controls */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                {[
+                  { id: 'all', label: 'All Accounts', count: adminUsers.length },
+                  { id: 'customer', label: 'Customers', count: adminUsers.filter((u) => u.role === 'customer').length },
+                  { id: 'worker', label: 'Specialists', count: adminUsers.filter((u) => u.role === 'worker').length },
+                  { id: 'admin', label: 'Admins', count: adminUsers.filter((u) => u.role === 'admin').length },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setAdminUserRoleFilter(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                      adminUserRoleFilter === tab.id
+                        ? 'bg-gradient-to-r from-[#881337] to-[#C2410C] text-white shadow-xs'
+                        : 'bg-amber-50/50 hover:bg-amber-100/60 text-stone-700 border border-amber-200/60'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                        adminUserRoleFilter === tab.id ? 'bg-white/20 text-white' : 'bg-stone-200/70 text-stone-700'
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative min-w-[220px]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+                  <HiOutlineSearch className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  value={adminUserSearch}
+                  onChange={(e) => setAdminUserSearch(e.target.value)}
+                  placeholder="Search name, email, phone…"
+                  className="w-full pl-9 pr-3 py-1.5 bg-amber-50/20 border border-amber-200/80 rounded-xl text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:bg-white focus:border-[#C2410C] transition"
+                />
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-amber-200/70">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-amber-50/70 border-b border-amber-200 text-[11px] font-bold uppercase tracking-wider text-stone-600">
-                    <th className="p-3">User</th>
+                  <tr className="bg-amber-50/80 border-b border-amber-200 text-[11px] font-bold uppercase tracking-wider text-stone-600">
+                    <th className="p-3">User / Specialist</th>
                     <th className="p-3">Role</th>
                     <th className="p-3">Contact</th>
                     <th className="p-3">Location</th>
+                    <th className="p-3 text-right">Admin Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-amber-100">
-                  {adminUsers.map((u) => (
-                    <tr key={u.user_id || u._id} className="hover:bg-amber-50/30 transition">
-                      <td className="p-3">
-                        <div className="flex items-center gap-2.5">
-                          {u.avatar ? (
-                            <img
-                              src={u.avatar}
-                              alt={u.name}
-                              className="w-8 h-8 rounded-full object-cover border"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#881337] to-[#C2410C] text-white flex items-center justify-center font-bold text-xs">
-                              {u.name?.charAt(0) || 'U'}
+                  {adminUsers
+                    .filter((u) => {
+                      const matchesRole = adminUserRoleFilter === 'all' || u.role === adminUserRoleFilter;
+                      const term = adminUserSearch.toLowerCase().trim();
+                      const matchesSearch =
+                        !term ||
+                        (u.name && u.name.toLowerCase().includes(term)) ||
+                        (u.email && u.email.toLowerCase().includes(term)) ||
+                        (u.phone && u.phone.toLowerCase().includes(term)) ||
+                        (u.location && u.location.toLowerCase().includes(term));
+                      return matchesRole && matchesSearch;
+                    })
+                    .map((u) => {
+                      const isSelf = (u.user_id || u._id || u.id) === (user?.user_id || user?._id || user?.id);
+                      return (
+                        <tr key={u.user_id || u._id || u.id} className="hover:bg-amber-50/30 transition">
+                          <td className="p-3">
+                            <div className="flex items-center gap-2.5">
+                              {u.avatar ? (
+                                <img
+                                  src={u.avatar}
+                                  alt={u.name}
+                                  className="w-8 h-8 rounded-full object-cover border"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#881337] to-[#C2410C] text-white flex items-center justify-center font-bold text-xs">
+                                  {u.name?.charAt(0) || 'U'}
+                                </div>
+                              )}
+                              <div>
+                                <span className="font-bold text-stone-900 block">{u.name}</span>
+                                <span className="text-stone-400 text-[11px]">{u.email}</span>
+                              </div>
                             </div>
-                          )}
-                          <div>
-                            <span className="font-bold text-stone-900 block">{u.name}</span>
-                            <span className="text-stone-400 text-[11px]">{u.email}</span>
-                          </div>
-                        </div>
+                          </td>
+                          <td className="p-3">
+                            <span
+                              className={`font-mono font-bold px-2 py-0.5 rounded-full text-[10px] uppercase ${
+                                u.role === 'admin'
+                                  ? 'bg-rose-100 text-rose-800'
+                                  : u.role === 'worker'
+                                  ? 'bg-amber-100 text-[#9A3412]'
+                                  : 'bg-emerald-100 text-emerald-800'
+                              }`}
+                            >
+                              {u.role === 'worker' ? 'Specialist' : u.role}
+                            </span>
+                          </td>
+                          <td className="p-3 font-mono text-stone-700">{u.phone || '—'}</td>
+                          <td className="p-3 text-stone-600">{u.location || 'Dhaka, Bangladesh'}</td>
+                          <td className="p-3 text-right">
+                            {isSelf ? (
+                              <span className="text-[11px] font-mono text-stone-400 italic px-2 py-1 rounded bg-stone-100 border border-stone-200">
+                                Active Admin (You)
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setUserToDelete(u)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-rose-700 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 transition font-bold text-[11px] shadow-2xs group cursor-pointer"
+                                title={`Remove ${u.name}'s account`}
+                              >
+                                <HiOutlineTrash className="w-3.5 h-3.5 text-rose-600 group-hover:text-white transition-colors" />
+                                <span>Remove</span>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  {adminUsers.filter((u) => {
+                    const matchesRole = adminUserRoleFilter === 'all' || u.role === adminUserRoleFilter;
+                    const term = adminUserSearch.toLowerCase().trim();
+                    const matchesSearch =
+                      !term ||
+                      (u.name && u.name.toLowerCase().includes(term)) ||
+                      (u.email && u.email.toLowerCase().includes(term)) ||
+                      (u.phone && u.phone.toLowerCase().includes(term)) ||
+                      (u.location && u.location.toLowerCase().includes(term));
+                    return matchesRole && matchesSearch;
+                  }).length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-stone-500">
+                        No registered accounts match your filter criteria.
                       </td>
-                      <td className="p-3">
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Admin Delete User Confirmation Modal */}
+            <AnimatePresence>
+              {userToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-rose-200 space-y-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200">
+                        <HiOutlineTrash className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-stone-900">
+                          Remove {userToDelete.role === 'worker' ? 'Specialist' : 'User'} Account
+                        </h3>
+                        <p className="text-xs text-stone-500">Administrator Authority Action</p>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-100 space-y-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-stone-500 font-medium">Account Name:</span>
+                        <span className="font-bold text-stone-900">{userToDelete.name}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-stone-500 font-medium">Email Address:</span>
+                        <span className="font-mono text-stone-800">{userToDelete.email}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-stone-500 font-medium">Account Type:</span>
                         <span
-                          className={`font-mono font-bold px-2 py-0.5 rounded-full text-[10px] uppercase ${
-                            u.role === 'admin'
+                          className={`font-mono uppercase font-bold text-[10px] px-2 py-0.5 rounded-full ${
+                            userToDelete.role === 'admin'
                               ? 'bg-rose-100 text-rose-800'
-                              : u.role === 'worker'
+                              : userToDelete.role === 'worker'
                               ? 'bg-amber-100 text-[#9A3412]'
                               : 'bg-emerald-100 text-emerald-800'
                           }`}
                         >
-                          {u.role}
+                          {userToDelete.role}
                         </span>
-                      </td>
-                      <td className="p-3 font-mono text-stone-700">{u.phone || '—'}</td>
-                      <td className="p-3 text-stone-600">{u.location || 'Dhaka, Bangladesh'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      ⚠️ <strong>Warning:</strong> Permanently deleting this account will remove all associated profile records, trade offerings, availability slots, and service bookings from the platform database.
+                    </p>
+
+                    <div className="flex items-center justify-end gap-2.5 pt-2">
+                      <button
+                        type="button"
+                        disabled={deletingUserLoading}
+                        onClick={() => setUserToDelete(null)}
+                        className="px-4 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        disabled={deletingUserLoading}
+                        onClick={handleConfirmDeleteUser}
+                        className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm flex items-center gap-1.5 transition disabled:opacity-60"
+                      >
+                        {deletingUserLoading ? (
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                            Removing Account…
+                          </>
+                        ) : (
+                          <>
+                            <HiOutlineTrash className="w-3.5 h-3.5" />
+                            Permanently Delete
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
 

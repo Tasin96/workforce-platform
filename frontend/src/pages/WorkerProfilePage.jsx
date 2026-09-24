@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
   HiOutlineLocationMarker,
   HiOutlineBriefcase,
@@ -13,20 +14,38 @@ import {
   HiOutlinePhone,
   HiOutlineSparkles,
   HiCheck,
+  HiOutlineTrash,
 } from 'react-icons/hi';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 import RatingStars from '../components/RatingStars';
 import LoadingSpinner from '../components/LoadingSpinner';
 import BookingModal from '../components/BookingModal';
 
 const WorkerProfilePage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteWorker = async () => {
+    setDeleting(true);
+    try {
+      const res = await api.delete(`/workers/${id}`);
+      toast.success(res.data?.message || 'Specialist account has been permanently removed.');
+      navigate('/browse');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to remove specialist account');
+      setDeleting(false);
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -69,13 +88,26 @@ const WorkerProfilePage = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Navigation Breadcrumb */}
-        <Link
-          to="/browse"
-          className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-stone-500 hover:text-[#C2410C] mb-6 transition-colors"
-        >
-          <HiOutlineArrowLeft className="text-sm" /> BACK TO SPECIALIST DIRECTORY
-        </Link>
+        {/* Navigation Breadcrumb & Admin Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <Link
+            to="/browse"
+            className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-stone-500 hover:text-[#C2410C] transition-colors"
+          >
+            <HiOutlineArrowLeft className="text-sm" /> BACK TO SPECIALIST DIRECTORY
+          </Link>
+
+          {user?.role === 'admin' && (
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 transition font-bold text-xs shadow-2xs group cursor-pointer"
+            >
+              <HiOutlineTrash className="w-4 h-4 text-rose-600 group-hover:text-white transition-colors" />
+              <span>Remove Specialist Account (Admin)</span>
+            </button>
+          )}
+        </div>
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Main Profile Info */}
@@ -376,6 +408,75 @@ const WorkerProfilePage = () => {
           onClose={() => setShowModal(false)}
           onSuccess={load}
         />
+      )}
+
+      {/* Admin Delete Specialist Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-rose-200 space-y-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200">
+                <HiOutlineTrash className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-stone-900">Remove Specialist Account</h3>
+                <p className="text-xs text-stone-500">Administrator Authority Action</p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-100 space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Specialist:</span>
+                <span className="font-bold text-stone-900">{displayName}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Trade:</span>
+                <span className="font-bold text-[#C2410C]">{profile.service_type}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Email:</span>
+                <span className="font-mono text-stone-800">{profile.user_id?.email || profile.user?.email || '—'}</span>
+              </div>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed">
+              ⚠️ <strong>Warning:</strong> Permanently deleting this worker will remove their specialist profile, offers, availability slots, and bookings from the platform.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeleteWorker}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm flex items-center gap-1.5 transition disabled:opacity-60 cursor-pointer"
+              >
+                {deleting ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Deleting…
+                  </>
+                ) : (
+                  <>
+                    <HiOutlineTrash className="w-3.5 h-3.5" />
+                    Permanently Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );

@@ -6,9 +6,12 @@ import {
   HiOutlineFilter,
   HiOutlineStar,
   HiOutlineCheckCircle,
+  HiOutlineTrash,
   HiX,
 } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 import WorkerCard from '../components/WorkerCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -16,12 +19,31 @@ const trades = ['All', 'Electrician', 'Plumber', 'Painter', 'Carpenter', 'Garden
 
 const BrowseWorkers = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useAuth();
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState(searchParams.get('search') || '');
   const [trade, setTrade] = useState(searchParams.get('trade') || 'All');
   const [minRating, setMinRating] = useState(0);
+  const [workerToDelete, setWorkerToDelete] = useState(null);
+  const [deletingWorkerLoading, setDeletingWorkerLoading] = useState(false);
   const isInitialMount = useRef(true);
+
+  const handleConfirmDeleteWorker = async () => {
+    if (!workerToDelete) return;
+    setDeletingWorkerLoading(true);
+    try {
+      const targetId = workerToDelete._id || workerToDelete.worker_id || workerToDelete.id;
+      const res = await api.delete(`/workers/${targetId}`);
+      toast.success(res.data?.message || 'Specialist account has been permanently removed.');
+      setWorkers((prev) => prev.filter((w) => (w._id || w.worker_id || w.id) !== targetId));
+      setWorkerToDelete(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to remove specialist');
+    } finally {
+      setDeletingWorkerLoading(false);
+    }
+  };
 
   const fetchWorkers = async (activeTrade = trade, activeQ = q, activeRating = minRating) => {
     setLoading(true);
@@ -187,9 +209,88 @@ const BrowseWorkers = () => {
       ) : (
         <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {workers.map((w, i) => (
-            <WorkerCard key={w._id} worker={w} index={i} />
+            <WorkerCard
+              key={w._id || w.worker_id || w.id}
+              worker={w}
+              index={i}
+              isAdmin={user?.role === 'admin'}
+              onDelete={(worker) => setWorkerToDelete(worker)}
+            />
           ))}
         </motion.div>
+      )}
+
+      {/* Admin Delete Worker Confirmation Modal */}
+      {workerToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-rose-200 space-y-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200">
+                <HiOutlineTrash className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-stone-900">Remove Specialist Account</h3>
+                <p className="text-xs text-stone-500">Administrator Authority Action</p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-100 space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Specialist:</span>
+                <span className="font-bold text-stone-900">
+                  {workerToDelete.user_id?.name || workerToDelete.user?.name || workerToDelete.name || 'Specialist'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Trade:</span>
+                <span className="font-bold text-[#C2410C]">{workerToDelete.service_type}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-stone-500 font-medium">Location:</span>
+                <span className="text-stone-700">
+                  {workerToDelete.user_id?.location || workerToDelete.user?.location || 'Dhaka, Bangladesh'}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed">
+              ⚠️ <strong>Warning:</strong> This will permanently delete this worker account and all associated profile details, offers, and bookings from the platform.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={deletingWorkerLoading}
+                onClick={() => setWorkerToDelete(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deletingWorkerLoading}
+                onClick={handleConfirmDeleteWorker}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm flex items-center gap-1.5 transition disabled:opacity-60 cursor-pointer"
+              >
+                {deletingWorkerLoading ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Deleting…
+                  </>
+                ) : (
+                  <>
+                    <HiOutlineTrash className="w-3.5 h-3.5" />
+                    Permanently Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );

@@ -6,10 +6,11 @@ import {
   HiOutlineBriefcase,
   HiOutlineCheckCircle,
   HiOutlineArrowRight,
+  HiOutlineTrash,
 } from 'react-icons/hi';
 import RatingStars from './RatingStars';
 
-const WorkerCard = ({ worker, index = 0 }) => {
+const WorkerCard = ({ worker, index = 0, isAdmin = false, onDelete }) => {
   const offer = worker.offers?.[0];
   const priceLabel = offer
     ? offer.hourly_rate
@@ -61,9 +62,25 @@ const WorkerCard = ({ worker, index = 0 }) => {
             </div>
           </div>
 
-          <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-amber-50/50 text-stone-700 border border-amber-200/60">
-            {worker.experience || 'Verified'}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-amber-50/50 text-stone-700 border border-amber-200/60">
+              {worker.experience || 'Verified'}
+            </span>
+            {isAdmin && onDelete && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDelete(worker);
+                }}
+                className="p-1.5 rounded-lg text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-200 transition shadow-2xs group/btn cursor-pointer"
+                title="Admin: Remove this specialist account"
+              >
+                <HiOutlineTrash className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Bio */}
