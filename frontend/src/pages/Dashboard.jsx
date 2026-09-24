@@ -475,13 +475,13 @@ const Dashboard = () => {
 
                 return (
                   <div
-                    key={p._id}
+                    key={p._id || p.id || p.payment_id || p.transaction_id}
                     className="p-4 rounded-xl border border-amber-200/70 bg-stone-50/40 hover:bg-amber-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition"
                   >
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-xs font-mono font-bold text-[#9A3412] bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60">
-                          {p.transaction_id || `TXN-${p._id?.slice(-6).toUpperCase()}`}
+                          {p.transaction_id || `TXN-${String(p._id || p.id || p.payment_id || '').slice(-6).toUpperCase()}`}
                         </span>
                         <span className="text-xs font-semibold text-stone-900">{serviceName}</span>
                         <span className="text-stone-300">•</span>
@@ -502,7 +502,7 @@ const Dashboard = () => {
                         </span>
                         <span>•</span>
                         <span>
-                          {new Date(p.paid_at || p.createdAt).toLocaleString(undefined, {
+                          {new Date(p.paid_at || p.createdAt || p.created_at || Date.now()).toLocaleString(undefined, {
                             dateStyle: 'medium',
                             timeStyle: 'short',
                           })}

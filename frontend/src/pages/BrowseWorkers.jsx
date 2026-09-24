@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -21,6 +21,7 @@ const BrowseWorkers = () => {
   const [q, setQ] = useState(searchParams.get('search') || '');
   const [trade, setTrade] = useState(searchParams.get('trade') || 'All');
   const [minRating, setMinRating] = useState(0);
+  const isInitialMount = useRef(true);
 
   const fetchWorkers = async (activeTrade = trade, activeQ = q, activeRating = minRating) => {
     setLoading(true);
@@ -49,6 +50,10 @@ const BrowseWorkers = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     fetchWorkers(trade, q, minRating);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minRating]);

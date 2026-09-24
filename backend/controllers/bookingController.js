@@ -157,13 +157,27 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
     throw new Error('Booking not found');
   }
 
+  const workerProfile = await WorkerProfile.findByPk(booking.worker_id);
+  const isCustomer = req.user.user_id === booking.customer_id;
+  const isWorker = workerProfile && workerProfile.user_id === req.user.user_id;
+  const isAdmin = req.user.role === 'admin';
+
+  if (!isCustomer && !isWorker && !isAdmin) {
+    res.status(403);
+    throw new Error('Not authorized to update this booking');
+  }
+
+  if (['accepted', 'in_progress'].includes(status) && !isWorker && !isAdmin) {
+    res.status(403);
+    throw new Error('Only the assigned specialist or an admin can accept or start this booking');
+  }
+
   const previousStatus = booking.status;
   booking.status = status;
   if (status === 'accepted') booking.accepted_at = new Date();
   if (status === 'in_progress') booking.started_at = new Date();
   if (status === 'completed' && previousStatus !== 'completed') {
     booking.completed_at = new Date();
-    const workerProfile = await WorkerProfile.findByPk(booking.worker_id);
     if (workerProfile) {
       workerProfile.completed_jobs = (workerProfile.completed_jobs || 0) + 1;
       await workerProfile.save();
@@ -177,7 +191,6 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
   await booking.save();
 
   // notify the other party
-  const workerProfile = await WorkerProfile.findByPk(booking.worker_id);
   const notifyUserId =
     req.user.user_id === booking.customer_id ? workerProfile?.user_id : booking.customer_id;
 

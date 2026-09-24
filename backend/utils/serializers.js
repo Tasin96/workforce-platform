@@ -18,8 +18,10 @@ const serializeUser = (u) => {
     role: u.role,
     location: u.location,
     avatar: u.avatar,
-    createdAt: u.createdAt,
-    updatedAt: u.updatedAt,
+    createdAt: u.createdAt || u.created_at,
+    created_at: u.createdAt || u.created_at,
+    updatedAt: u.updatedAt || u.updated_at,
+    updated_at: u.updatedAt || u.updated_at,
   };
 };
 
@@ -97,8 +99,10 @@ const serializePayment = (p) => {
     method: p.method,
     status: p.status,
     transaction_id: p.transaction_id,
-    paid_at: p.paid_at,
-    createdAt: p.createdAt,
+    paid_at: p.paid_at || p.paidAt,
+    paidAt: p.paid_at || p.paidAt,
+    createdAt: p.createdAt || p.created_at,
+    created_at: p.createdAt || p.created_at,
     booking: p.booking ? serializeBooking(p.booking, { includeRelations: false }) : undefined,
   };
 };
@@ -116,7 +120,8 @@ const serializeReview = (r) => {
     worker_id: r.worker_id,
     rating: num(r.rating) || 0,
     comment: r.comment,
-    createdAt: r.createdAt,
+    createdAt: r.createdAt || r.created_at,
+    created_at: r.createdAt || r.created_at,
   };
 };
 
@@ -133,7 +138,8 @@ const serializeDispute = (d) => {
     raiser: raiserObj,
     reason: d.reason,
     status: d.status,
-    created_at: d.created_at,
+    created_at: d.created_at || d.createdAt,
+    createdAt: d.created_at || d.createdAt,
     resolved_at: d.resolved_at,
   };
 };
@@ -166,7 +172,8 @@ const serializeBooking = (b, { includeRelations = true } = {}) => {
     completed_at: b.completed_at,
     cancelled_by: b.cancelled_by,
     cancellation_reason: b.cancellation_reason,
-    createdAt: b.createdAt,
+    createdAt: b.createdAt || b.created_at,
+    created_at: b.createdAt || b.created_at,
     payment: includeRelations && b.payment ? serializePayment(b.payment) : null,
     review: includeRelations && b.review ? serializeReview(b.review) : null,
     disputes: includeRelations && Array.isArray(b.disputes) ? b.disputes.map(serializeDispute) : [],
@@ -183,7 +190,9 @@ const serializeNotification = (n) => {
     type: n.type,
     message: n.message,
     is_read: n.is_read,
-    sent_at: n.sent_at,
+    sent_at: n.sent_at || n.createdAt || n.created_at,
+    createdAt: n.sent_at || n.createdAt || n.created_at,
+    created_at: n.sent_at || n.createdAt || n.created_at,
     link: n.link,
   };
 };

@@ -231,9 +231,9 @@ const WorkerProfilePage = () => {
                             )}
                             <div>
                               <span className="font-bold text-stone-900 text-xs block">{reviewerName}</span>
-                              {r.createdAt && (
+                              {(r.createdAt || r.created_at) && (
                                 <span className="text-[10px] text-stone-400 font-mono">
-                                  {new Date(r.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                                  {new Date(r.createdAt || r.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                                 </span>
                               )}
                             </div>

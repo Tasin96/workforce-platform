@@ -167,10 +167,16 @@ const BookingModal = ({ worker, offer, onClose, onSuccess }) => {
     try {
       const resolvedServiceId =
         offer?.service_id?._id ||
-        (typeof offer?.service_id === 'string' ? offer.service_id : undefined);
+        offer?.service_id?.service_id ||
+        (typeof offer?.service_id === 'string' ? offer.service_id : undefined) ||
+        worker?.offers?.[0]?.service_id?._id ||
+        worker?.offers?.[0]?.service_id?.service_id ||
+        (typeof worker?.offers?.[0]?.service_id === 'string' ? worker.offers[0].service_id : undefined);
+
+      const resolvedWorkerId = worker?._id || worker?.worker_id || worker?.id;
 
       await api.post('/bookings', {
-        worker_id: worker._id,
+        worker_id: resolvedWorkerId,
         service_id: resolvedServiceId,
         date_time: form.date_time,
         address: form.address,

@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
-const { User, WorkerProfile, Notification } = require('../models');
+const { User, WorkerProfile, Notification, WorkerServiceOffer, Availability, Service } = require('../models');
+const { serializeUser, serializeWorkerProfile, serializeOffer, serializeAvailability } = require('../utils/serializers');
 const generateToken = require('../utils/generateToken');
 
 // @desc Register new user (customer or worker)
@@ -73,9 +74,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 });
-
-const { serializeUser, serializeWorkerProfile, serializeOffer, serializeAvailability } = require('../utils/serializers');
-const { WorkerProfile, WorkerServiceOffer, Availability, Service } = require('../models');
 
 // @desc Get logged-in user profile
 // @route GET /api/auth/me

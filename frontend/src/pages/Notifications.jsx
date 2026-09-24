@@ -48,7 +48,11 @@ const Notifications = () => {
     try {
       await api.put(`/notifications/${id}/read`);
       setItems((prev) =>
-        prev.map((item) => (item.id === id || item._id === id ? { ...item, is_read: true } : item))
+        prev.map((item) =>
+          item.id === id || item._id === id || item.notification_id === id
+            ? { ...item, is_read: true }
+            : item
+        )
       );
       toast.success('Notification marked as read');
     } catch (err) {
@@ -135,10 +139,10 @@ const Notifications = () => {
         ) : (
           <div className="space-y-3">
             {displayedItems.map((n, i) => {
-              const notifId = n.id || n._id;
+              const notifId = n.notification_id || n.id || n._id;
               return (
                 <motion.div
-                  key={notifId}
+                  key={notifId || i}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.03, 0.2) }}

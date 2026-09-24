@@ -205,7 +205,7 @@ const Profile = () => {
       const { data } = await api.put('/users/me', { avatar: avatarUrl });
       const updatedUser = { ...user, ...data, avatar: avatarUrl };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem('wf_user', JSON.stringify(updatedUser));
       toast.success('Profile picture updated successfully!');
       setCustomAvatarUrl('');
       setShowPresets(false);
@@ -221,7 +221,7 @@ const Profile = () => {
       const { data } = await api.put('/users/me', { avatar: '' });
       const updatedUser = { ...user, ...data, avatar: '' };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem('wf_user', JSON.stringify(updatedUser));
       toast.success('Profile picture removed');
     } catch (err) {
       toast.error('Failed to remove profile picture');
@@ -241,7 +241,7 @@ const Profile = () => {
       });
       const updatedUser = { ...user, ...data };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem('wf_user', JSON.stringify(updatedUser));
       toast.success('Account profile updated successfully!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update profile');
