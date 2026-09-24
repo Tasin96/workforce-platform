@@ -18,7 +18,8 @@ const bookingIncludes = [
 // @desc Create a booking (customer or admin books a worker for a service)
 // @route POST /api/bookings
 const createBooking = asyncHandler(async (req, res) => {
-  let { worker_id, service_id, date_time, address, notes, estimatedCost } = req.body;
+  let { worker_id, service_id, date_time, address, notes, estimatedCost, duration_hours } = req.body;
+  const parsedHours = Math.max(1, parseInt(duration_hours, 10) || 1);
 
   if (!worker_id || !date_time) {
     res.status(400);
@@ -64,6 +65,7 @@ const createBooking = asyncHandler(async (req, res) => {
     date_time,
     address,
     notes,
+    duration_hours: parsedHours,
     estimated_cost: estimatedCost || 0,
     status: 'pending',
   });

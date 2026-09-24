@@ -20,6 +20,7 @@ import {
   HiOutlineClipboardCopy,
   HiCheck,
   HiX,
+  HiOutlineClock,
 } from 'react-icons/hi';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -131,7 +132,7 @@ const ReviewForm = ({ booking, onDone, onCancel }) => {
 // --- Modern Payment Form Component ---
 const PaymentForm = ({ booking, onDone, onCancel }) => {
   const [method, setMethod] = useState('mobile_banking');
-  const [amount, setAmount] = useState(booking.estimatedCost || 500);
+  const [amount, setAmount] = useState(booking.estimatedCost ?? booking.estimated_cost ?? 500);
   const [customTxn, setCustomTxn] = useState('');
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -184,6 +185,7 @@ const PaymentForm = ({ booking, onDone, onCancel }) => {
   };
 
   const bookingCode = String(booking._id || '').slice(-6).toUpperCase();
+  const bookedDuration = booking.duration_hours || booking.durationHours || 1;
 
   return (
     <motion.div
@@ -192,7 +194,7 @@ const PaymentForm = ({ booking, onDone, onCancel }) => {
       exit={{ opacity: 0, height: 0 }}
       className="mt-4 p-5 sm:p-6 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-sm"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
           <HiOutlineCurrencyDollar className="text-emerald-600 text-base" />
           Settle Escrow Payment for Job #{bookingCode}
@@ -204,6 +206,20 @@ const PaymentForm = ({ booking, onDone, onCancel }) => {
         >
           Cancel
         </button>
+      </div>
+
+      {/* Duration & Amount Summary Banner */}
+      <div className="mb-4 bg-white/80 p-3 rounded-xl border border-emerald-200/90 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-1.5 text-stone-700">
+          <HiOutlineClock className="text-emerald-700 text-sm" />
+          <span>Booked Duration:</span>
+          <strong className="font-mono text-emerald-900 font-bold">
+            {bookedDuration} {bookedDuration === 1 ? 'Hour' : 'Hours'}
+          </strong>
+        </div>
+        <div className="font-mono font-bold text-emerald-800 text-sm">
+          ৳{amount} BDT
+        </div>
       </div>
 
       <form onSubmit={submit} className="space-y-4">
@@ -703,9 +719,17 @@ const MyBookings = () => {
                       <HiOutlineLocationMarker className="text-[#C2410C] text-sm" />
                       {b.address || 'Address provided on file'}
                     </span>
-                    {b.estimatedCost > 0 && (
+                    <span className="flex items-center gap-1.5 font-medium text-stone-700">
+                      <HiOutlineClock className="text-[#C2410C] text-sm" />
+                      <span>Duration:</span>
+                      <strong className="font-mono text-[#881337] font-bold">
+                        {b.duration_hours || b.durationHours || 1}{' '}
+                        {(b.duration_hours || b.durationHours || 1) === 1 ? 'hr' : 'hrs'}
+                      </strong>
+                    </span>
+                    {(b.estimatedCost > 0 || b.estimated_cost > 0) && (
                       <span className="font-mono font-bold text-[#881337]">
-                        Rate / Est: ৳{b.estimatedCost} BDT
+                        Total: ৳{b.estimatedCost || b.estimated_cost} BDT
                       </span>
                     )}
                   </div>
@@ -840,7 +864,7 @@ const MyBookings = () => {
                         className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] hover:from-[#9F1239] hover:via-[#EA580C] hover:to-[#F59E0B] text-white text-xs font-bold shadow-sm shadow-[#C2410C]/20 transition flex items-center gap-1.5"
                       >
                         <HiOutlineCreditCard className="text-sm" />
-                        Settle ৳{b.estimatedCost || '500'}
+                        Settle ৳{b.estimatedCost || b.estimated_cost || '500'}
                       </button>
                     )}
 

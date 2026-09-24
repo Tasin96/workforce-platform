@@ -157,6 +157,8 @@ const serializeBooking = (b, { includeRelations = true } = {}) => {
     status: b.status,
     address: b.address,
     notes: b.notes,
+    duration_hours: parseInt(b.duration_hours, 10) || 1,
+    durationHours: parseInt(b.duration_hours, 10) || 1,
     estimatedCost: num(b.estimated_cost) || 0,
     estimated_cost: num(b.estimated_cost) || 0,
     accepted_at: b.accepted_at,

@@ -18,6 +18,7 @@ const Booking = sequelize.define(
     },
     address: { type: DataTypes.TEXT, defaultValue: '' },
     notes: { type: DataTypes.TEXT, defaultValue: '' },
+    duration_hours: { type: DataTypes.INTEGER, defaultValue: 1 },
     estimated_cost: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
     accepted_at: { type: DataTypes.DATE, allowNull: true },
     started_at: { type: DataTypes.DATE, allowNull: true },

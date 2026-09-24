@@ -32,6 +32,7 @@ const ensureDb = async () => {
     dbInitPromise = (async () => {
       await connectDB();
       await sequelize.sync();
+      await sequelize.query('ALTER TABLE bookings ADD COLUMN IF NOT EXISTS duration_hours INTEGER DEFAULT 1;').catch(() => {});
       try {
         const count = await Service.count();
         if (count === 0) {

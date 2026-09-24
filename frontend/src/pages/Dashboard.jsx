@@ -324,7 +324,7 @@ const Dashboard = () => {
                           {b.service_id?.service_name || 'Service Booking'}
                         </span>
                       </div>
-                      <p className="text-xs text-stone-500 mt-1 flex items-center gap-2">
+                      <p className="text-xs text-stone-500 mt-1 flex flex-wrap items-center gap-2">
                         <span>
                           {new Date(b.date_time).toLocaleString(undefined, {
                             dateStyle: 'medium',
@@ -333,6 +333,13 @@ const Dashboard = () => {
                         </span>
                         <span>•</span>
                         <span>{b.address || 'Address on file'}</span>
+                        <span>•</span>
+                        <span className="font-medium text-stone-700 font-mono">
+                          {b.duration_hours || b.durationHours || 1}{' '}
+                          {(b.duration_hours || b.durationHours || 1) === 1 ? 'hr' : 'hrs'}
+                          {(b.estimatedCost > 0 || b.estimated_cost > 0) &&
+                            ` (৳${b.estimatedCost || b.estimated_cost})`}
+                        </span>
                       </p>
                     </div>
 
@@ -419,7 +426,7 @@ const Dashboard = () => {
                             onClick={() => setSelectedBookingForPayment(b)}
                             className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] hover:from-[#9F1239] hover:via-[#EA580C] hover:to-[#F59E0B] text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5"
                           >
-                            <HiOutlineCreditCard className="text-sm" /> Settle ৳{b.estimatedCost || 500}
+                            <HiOutlineCreditCard className="text-sm" /> Settle ৳{b.estimatedCost || b.estimated_cost || 500}
                           </button>
                         )
                       )}

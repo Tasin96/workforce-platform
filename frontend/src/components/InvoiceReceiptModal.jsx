@@ -133,7 +133,11 @@ const InvoiceReceiptModal = ({ isOpen, payment, onClose }) => {
                 <tbody className="divide-y divide-amber-100 text-xs">
                   <tr>
                     <td className="p-3.5 sm:px-5 font-semibold text-stone-900">
-                      {service.service_name || 'Professional Trade Service'}
+                      <div>{service.service_name || 'Professional Trade Service'}</div>
+                      <div className="text-[11px] font-normal text-stone-500 mt-0.5">
+                        Duration: {booking.duration_hours || booking.durationHours || 1}{' '}
+                        {(booking.duration_hours || booking.durationHours || 1) === 1 ? 'Hour' : 'Hours'}
+                      </div>
                     </td>
                     <td className="p-3.5 sm:px-5 text-stone-500">
                       {booking.notes || 'Verified on-site appointment'}

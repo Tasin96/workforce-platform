@@ -11,6 +11,7 @@ import {
   HiOutlineDeviceMobile,
   HiOutlineCalendar,
   HiOutlineLocationMarker,
+  HiOutlineClock,
 } from 'react-icons/hi';
 import api from '../api/axios';
 
@@ -18,7 +19,7 @@ const PaymentModal = ({ isOpen, booking, onClose, onSuccess }) => {
   if (!isOpen || !booking) return null;
 
   const [method, setMethod] = useState('mobile_banking');
-  const [amount, setAmount] = useState(booking.estimatedCost || 500);
+  const [amount, setAmount] = useState(booking.estimatedCost ?? booking.estimated_cost ?? 500);
   const [customTxn, setCustomTxn] = useState('');
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -131,22 +132,44 @@ const PaymentModal = ({ isOpen, booking, onClose, onSuccess }) => {
 
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             {/* Amount Summary Pill */}
-            <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200/80 flex items-center justify-between">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 block">
-                  Total Payable Amount
-                </span>
-                <div className="flex items-baseline gap-1 mt-0.5">
-                  <span className="text-2xl font-extrabold text-[#881337] font-mono">৳{amount}</span>
-                  <span className="text-xs font-semibold text-stone-500">BDT</span>
+            <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200/80 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 block">
+                    Total Payable Amount
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-2xl font-extrabold text-[#881337] font-mono">৳{amount}</span>
+                    <span className="text-xs font-semibold text-stone-500">BDT</span>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-[11px] font-bold text-[#9A3412] bg-amber-100/70 border border-amber-300/80 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <HiOutlineShieldCheck className="text-sm text-[#C2410C]" /> 100% Guaranteed Escrow
+                  </span>
+                  <span className="text-[10px] text-stone-400 mt-1 block">Zero platform surcharge</span>
                 </div>
               </div>
 
-              <div className="text-right">
-                <span className="text-[11px] font-bold text-[#9A3412] bg-amber-100/70 border border-amber-300/80 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                  <HiOutlineShieldCheck className="text-sm text-[#C2410C]" /> 100% Guaranteed Escrow
-                </span>
-                <span className="text-[10px] text-stone-400 mt-1 block">Zero platform surcharge</span>
+              {/* Booked Duration & Calculation Basis */}
+              <div className="pt-2 border-t border-amber-200/70 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-600 bg-white/70 px-3 py-2 rounded-xl">
+                <div className="flex items-center gap-1.5">
+                  <HiOutlineClock className="text-[#C2410C] text-sm" />
+                  <span>Duration:</span>
+                  <strong className="text-stone-900 font-mono font-bold">
+                    {booking.duration_hours || booking.durationHours || 1}{' '}
+                    {(booking.duration_hours || booking.durationHours || 1) === 1 ? 'Hour' : 'Hours'}
+                  </strong>
+                </div>
+                <div className="font-mono text-[11px] text-[#9A3412] font-semibold">
+                  {(booking.duration_hours || booking.durationHours || 1) > 1
+                    ? `Calculated: ৳${Math.round(
+                        (booking.estimatedCost ?? booking.estimated_cost ?? amount) /
+                          (booking.duration_hours || booking.durationHours || 1)
+                      )}/hr × ${booking.duration_hours || booking.durationHours || 1} hrs`
+                    : `Base Rate: ৳${amount} BDT`}
+                </div>
               </div>
             </div>
 
