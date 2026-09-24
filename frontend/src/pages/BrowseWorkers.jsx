@@ -94,9 +94,7 @@ const BrowseWorkers = () => {
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-stone-900 tracking-tight">
             Find Verified Local Specialists
           </h1>
-          <p className="text-stone-600 mt-2 max-w-xl text-sm sm:text-base leading-relaxed">
-            Search qualified electricians, plumbers, carpenters, and painters. All professionals have background checks and client ratings.
-          </p>
+
         </div>
 
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-stone-600 bg-amber-50/50 px-3 py-1.5 rounded-lg border border-amber-200/80">
