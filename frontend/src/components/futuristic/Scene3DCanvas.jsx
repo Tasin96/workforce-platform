@@ -1,16 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { playBlip, playClick } from '../../utils/cyberAudio';
-import { HiOutlineRefresh, HiOutlineEye, HiOutlineCube } from 'react-icons/hi';
-
-const MODES = {
-  GLOBAL: 'GLOBAL MATRIX',
-  NEURAL: 'NEURAL NODES',
-  CORE: 'QUANTUM CORE',
-};
+import { playClick } from '../../utils/cyberAudio';
 
 const Scene3DCanvas = ({ className = '' }) => {
   const canvasRef = useRef(null);
-  const [mode, setMode] = useState('GLOBAL');
   const [isHovered, setIsHovered] = useState(false);
 
   // Mouse & interaction state refs for zero-overhead animation loop
@@ -30,9 +22,7 @@ const Scene3DCanvas = ({ className = '' }) => {
     rings: [],
   });
 
-  useEffect(() => {
-    stateRef.current.mode = mode;
-  }, [mode]);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -346,11 +336,6 @@ const Scene3DCanvas = ({ className = '' }) => {
     stateRef.current.isDragging = false;
   };
 
-  const switchMode = (m) => {
-    setMode(m);
-    playBlip(1600);
-  };
-
   return (
     <div
       className={`relative w-full h-full select-none ${className}`}
@@ -368,35 +353,6 @@ const Scene3DCanvas = ({ className = '' }) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       />
-
-
-      {/* Bottom Mode Switcher HUD */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/95 border border-amber-200/90 backdrop-blur-2xl shadow-ticket">
-        {Object.entries(MODES).map(([key, label]) => {
-          const isActive = mode === key;
-          return (
-            <button
-              key={key}
-              onClick={() => switchMode(key)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 flex items-center gap-1.5 ${
-                isActive
-                  ? 'bg-gradient-to-r from-[#881337] via-[#C2410C] to-[#D97706] text-white shadow-md scale-105'
-                  : 'text-stone-600 hover:text-[#C2410C] hover:bg-amber-50/70'
-              }`}
-            >
-              {key === 'GLOBAL' && <HiOutlineCube className="text-sm" />}
-              {key === 'NEURAL' && <HiOutlineEye className="text-sm" />}
-              {key === 'CORE' && <HiOutlineRefresh className="text-sm" />}
-              <span>{label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Subtle Drag Hint */}
-      <div className="absolute bottom-12 right-4 text-[10px] font-mono text-slate-500 pointer-events-none hidden md:block">
-        [CLICK &amp; DRAG TO ROTATE MATRIX]
-      </div>
     </div>
   );
 };
