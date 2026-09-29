@@ -9,8 +9,7 @@ import {
   HiOutlinePhone, 
   HiOutlineLocationMarker,
   HiOutlineBriefcase,
-  HiArrowRight,
-  HiShieldCheck
+  HiArrowRight
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { scrollToTop } from '../components/ScrollToTop';
@@ -259,12 +258,6 @@ const Register = () => {
             Sign in here
           </Link>
         </p>
-
-        {/* Security / Verification Assurance */}
-        <div className="mt-6 pt-5 border-t border-amber-100 flex items-center justify-center gap-2 text-xs text-stone-500">
-          <HiShieldCheck className="w-4 h-4 text-amber-600" />
-          <span>Enterprise Data Protection • 256-bit Secure Encryption</span>
-        </div>
       </motion.div>
     </div>
   );
