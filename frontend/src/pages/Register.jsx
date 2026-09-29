@@ -9,7 +9,8 @@ import {
   HiOutlinePhone, 
   HiOutlineLocationMarker,
   HiOutlineBriefcase,
-  HiArrowRight
+  HiArrowRight,
+  HiShieldCheck
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { scrollToTop } from '../components/ScrollToTop';
